@@ -4,7 +4,7 @@
     "dev": "wrangler dev",
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate",
-    "seed": "bun run src/seed/index.ts",
+    "seed": "bun run src/db/seed/index.ts",
     "migrate:seed": "bun migrate & bun seed",
     "format": "bunx biome format --write ./src",
     "deploy": "wrangler deploy"
@@ -15,6 +15,7 @@
     "@hono/zod-validator": "^0.4.1",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.35.3",
+    "fast-glob": "^3.3.2",
     "hono": "^4.6.7",
     "pg": "^8.13.1",
     "ulid": "^2.3.0"
@@ -22,9 +23,11 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@cloudflare/workers-types": "^4.20240925.0",
+    "@faker-js/faker": "^9.1.0",
     "@types/bun": "^1.1.12",
     "@types/pg": "^8.11.10",
     "drizzle-kit": "^0.26.2",
+    "path": "^0.12.7",
     "typescript": "^5.6.3",
     "wrangler": "^3.79.0"
   }

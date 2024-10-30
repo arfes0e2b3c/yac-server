@@ -1,8 +1,14 @@
+import path from 'path'
 import { defineConfig } from 'drizzle-kit'
+import fg from 'fast-glob'
+
+const schemaFiles = fg
+	.sync('./src/db/schema/**/*.ts')
+	.map((file) => path.resolve(file))
 
 export default defineConfig({
 	dialect: 'postgresql',
-	schema: './src/db/schema.ts',
+	schema: schemaFiles,
 	out: './drizzle',
 	dbCredentials: {
 		ssl: false,

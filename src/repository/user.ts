@@ -12,7 +12,6 @@ class UserRepository {
 				.select()
 				.from(usersTable)
 				.where(sql`${usersTable.deletedAt} IS NULL`)
-				.leftJoin(postsTable, sql`${postsTable.userId} = ${usersTable.id}`)
 		})
 	}
 	async getById(c: Context, userId: string) {

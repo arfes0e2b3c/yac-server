@@ -12,7 +12,7 @@ export const usersTable = pgTable('users', {
 	userCode: varchar('user_code', { length: 255 }).notNull().unique(),
 	name: varchar('name', { length: 255 }).notNull(),
 	bio: varchar('bio', { length: 255 }).notNull(),
-	lastLogined_at: timestamp('last_logined_at').default(sql`NULL`),
+	lastLoginedAt: timestamp('last_logined_at').default(sql`NULL`),
 	createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
 	updatedAt: timestamp('updated_at')
 		.default(sql`CURRENT_TIMESTAMP`)

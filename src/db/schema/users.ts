@@ -21,11 +21,8 @@ export const usersTable = pgTable('users', {
 	deletedAt: timestamp('deleted_at').default(sql`NULL`),
 })
 
-export const usersToTagsRelation = relations(usersTable, ({ many }) => ({
+export const usersRelation = relations(usersTable, ({ many }) => ({
 	tagsTable: many(tagsTable),
-}))
-
-export const usersToPostsRelation = relations(usersTable, ({ many }) => ({
 	postsTable: many(postsTable),
 }))
 

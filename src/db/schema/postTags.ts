@@ -31,11 +31,11 @@ export const postTagsTable = pgTable(
 )
 
 export const postTagsRelation = relations(postTagsTable, ({ one }) => ({
-	posts: one(postsTable, {
+	post: one(postsTable, {
 		fields: [postTagsTable.postId],
 		references: [postsTable.id],
 	}),
-	tags: one(tagsTable, {
+	tag: one(tagsTable, {
 		fields: [postTagsTable.tagId],
 		references: [tagsTable.id],
 	}),

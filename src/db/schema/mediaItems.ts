@@ -1,7 +1,6 @@
 import { relations, sql } from 'drizzle-orm'
 import { pgTable, timestamp, varchar } from 'drizzle-orm/pg-core'
 import { ulid } from 'ulid'
-import { postTagsTable } from './postTags'
 import { postsTable } from './posts'
 
 export const mediaItemsTable = pgTable('media_items', {
@@ -19,11 +18,8 @@ export const mediaItemsTable = pgTable('media_items', {
 	deletedAt: timestamp('deleted_at').default(sql`NULL`),
 })
 
-export const mediaItemsToPostsRelation = relations(
-	mediaItemsTable,
-	({ many }) => ({
-		posts: many(postsTable),
-	})
-)
+export const mediaItemsRelation = relations(mediaItemsTable, ({ many }) => ({
+	posts: many(postsTable),
+}))
 
 export type MediaItemsTableSchema = typeof mediaItemsTable.$inferSelect

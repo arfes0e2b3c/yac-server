@@ -2,8 +2,6 @@ import { fakerJA as faker } from '@faker-js/faker'
 import { ulid } from 'ulid'
 import { SeedDb } from '.'
 import { MediaItemsTableSchema, mediaItemsTable } from '../schema/mediaItems'
-import { tagsTable } from '../schema/tags'
-import { fakeTag } from './tags'
 
 export const fakeMediaItems: () => MediaItemsTableSchema = () => ({
 	id: ulid(),

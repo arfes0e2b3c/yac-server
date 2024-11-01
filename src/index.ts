@@ -1,7 +1,9 @@
 import { swaggerUI } from '@hono/swagger-ui'
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { HTTPException } from 'hono/http-exception'
+import { mediaItemApp } from './controller/mediaItem'
 import { postApp } from './controller/post'
+import { tagApp } from './controller/tag'
 import { userApp } from './controller/user'
 
 const app = new OpenAPIHono().basePath('/api')
@@ -17,6 +19,8 @@ app.onError((err, c) => {
 
 app.route('/', userApp)
 app.route('/', postApp)
+app.route('/', tagApp)
+app.route('/', mediaItemApp)
 app.get('/', (c) => c.text('Hello, World!'))
 
 app.doc31('/doc', {

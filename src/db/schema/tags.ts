@@ -23,15 +23,12 @@ export const tagsTable = pgTable('tags', {
 	deletedAt: timestamp('deleted_at').default(sql`NULL`),
 })
 
-export const tagsToPostTagsRelation = relations(tagsTable, ({ many }) => ({
-	postTags: many(postTagsTable),
-}))
-
-export const tagsToUsersRelation = relations(tagsTable, ({ one }) => ({
-	users: one(usersTable, {
+export const tagsRelation = relations(tagsTable, ({ one, many }) => ({
+	user: one(usersTable, {
 		fields: [tagsTable.userId],
 		references: [usersTable.id],
 	}),
+	postTags: many(postTagsTable),
 }))
 
 export type TagsTableSchema = typeof tagsTable.$inferSelect

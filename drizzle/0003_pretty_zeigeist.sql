@@ -1,0 +1,1 @@
+ALTER TABLE "media_items" ALTER COLUMN "relation_count" SET NOT NULL;

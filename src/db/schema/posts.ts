@@ -45,21 +45,15 @@ export const postsTable = pgTable('posts', {
 	deletedAt: timestamp('deleted_at').default(sql`NULL`),
 })
 
-export const postsToUsersRelation = relations(postsTable, ({ one }) => ({
-	users: one(usersTable, {
+export const postsRelation = relations(postsTable, ({ one, many }) => ({
+	user: one(usersTable, {
 		fields: [postsTable.userId],
 		references: [usersTable.id],
 	}),
-}))
-
-export const postsToMediaItemsRelation = relations(postsTable, ({ one }) => ({
-	mediaItems: one(mediaItemsTable, {
+	mediaItem: one(mediaItemsTable, {
 		fields: [postsTable.mediaItemId],
 		references: [mediaItemsTable.id],
 	}),
-}))
-
-export const postsToPostTagsRelation = relations(postsTable, ({ many }) => ({
 	postTags: many(postTagsTable),
 }))
 

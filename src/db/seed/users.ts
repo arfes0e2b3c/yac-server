@@ -16,7 +16,7 @@ export const fakeUser: () => UsersTableSchema = () => ({
 		from: '2024-08-01T00:00:00.000Z',
 		to: '2024-09-01T00:00:00.000Z',
 	}),
-	lastLogined_at: faker.date.between({
+	lastLoginedAt: faker.date.between({
 		from: '2024-09-01T00:00:00.000Z',
 		to: '2024-10-01T00:00:00.000Z',
 	}),

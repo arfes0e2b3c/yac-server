@@ -5,6 +5,8 @@ export const zString = (example: string) =>
 		example,
 	})
 
+export const zNum = (example: number) => z.number().openapi({ example })
+
 export const zDate = (example: string) =>
 	z.date().openapi({
 		example,

@@ -7,6 +7,7 @@ export const fakeMediaItems: () => MediaItemsTableSchema = () => ({
 	id: ulid(),
 	title: faker.lorem.word(),
 	imageUrl: faker.image.url({ width: 640, height: 480 }),
+	relationCount: 0,
 	createdAt: faker.date.between({
 		from: '2023-01-01T00:00:00.000Z',
 		to: '2024-08-01T00:00:00.000Z',

@@ -12,12 +12,8 @@ class UserService {
 	async create(c: Context, body: UserInputSchema) {
 		return await repo.user.create(c, body)
 	}
-	async updateByUserId(
-		c: Context,
-		userId: string,
-		{ userCode, name, bio }: { userCode: string; name: string; bio: string }
-	) {
-		return await repo.user.updateByUserId(c, userId, { userCode, name, bio })
+	async updateByUserId(c: Context, userId: string, body: UserInputSchema) {
+		return await repo.user.updateByUserId(c, userId, body)
 	}
 	async deleteByUserId(c: Context, userId: string) {
 		return await repo.user.deleteByUserId(c, userId)

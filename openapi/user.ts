@@ -87,7 +87,7 @@ export const fetchMeRoute = createRoute({
 })
 
 export const createUserRoute = createRoute({
-	path: '/',
+	path: '/users',
 	method: 'post',
 	description: 'ユーザーを新規追加する',
 	request: {

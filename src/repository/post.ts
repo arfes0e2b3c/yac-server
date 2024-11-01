@@ -1,11 +1,9 @@
 import { env } from 'bun'
 import { sql } from 'drizzle-orm'
-import { drizzle } from 'drizzle-orm/node-postgres'
 import { Context } from 'hono'
-import { Client } from 'pg'
+import { HTTPException } from 'hono/http-exception'
 import { PostInputSchema, PostListSchema, PostSchema } from '../../openapi/post'
 import { withDbConnection } from '../db/connection'
-import { schema } from '../db/schema'
 import { postsTable } from '../db/schema/posts'
 
 class PostRepository {
@@ -19,6 +17,18 @@ class PostRepository {
 				with: {
 					user: true,
 					mediaItem: true,
+					postTags: {
+						columns: {
+							postId: false,
+							tagId: false,
+							createdAt: false,
+							updatedAt: false,
+							deletedAt: false,
+						},
+						with: {
+							tag: true,
+						},
+					},
 				},
 				where: sql`${postsTable.deletedAt} IS NULL`,
 			})
@@ -27,7 +37,7 @@ class PostRepository {
 
 	async getByPostId(c: Context, postId: string) {
 		return withDbConnection(c, async (db) => {
-			return await db.query.postsTable.findFirst({
+			const res = await db.query.postsTable.findFirst({
 				columns: {
 					userId: false,
 					mediaItemId: false,
@@ -35,11 +45,30 @@ class PostRepository {
 				with: {
 					user: true,
 					mediaItem: true,
+					postTags: {
+						columns: {
+							postId: false,
+							tagId: false,
+							createdAt: false,
+							updatedAt: false,
+							deletedAt: false,
+						},
+						with: {
+							tag: true,
+						},
+					},
 				},
 				where: sql`${postsTable.id} = ${postId} and ${postsTable.deletedAt} IS NULL`,
 			})
+			if (!res) {
+				throw new HTTPException(404, {
+					message: 'Post not found',
+				})
+			}
+			return res
 		})
 	}
+
 	async getByUserId(c: Context, userId: string) {
 		return withDbConnection(c, async (db) => {
 			const res = await db

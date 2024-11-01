@@ -1,7 +1,5 @@
-import path from 'path'
 import { createRoute, z } from '@hono/zod-openapi'
 import { zDate, zString } from './common'
-import { userSchema } from './user'
 
 export const postSchema = z.object({
 	id: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
@@ -12,15 +10,14 @@ export const postSchema = z.object({
 	music: zString('01J8F3CJR0NJM89W64KYWSEJVA').nullable(),
 	imageUrl: zString('https://example.com/image.jpg').nullable(),
 	relatedUrl: zString('https://example.com/related').nullable(),
-	user: userSchema,
 	visibility: z.enum(['private', 'public', 'only_followers']),
 	createdAt: zDate('2024-09-23 07:57:06'),
 	updatedAt: zDate('2024-09-23 07:57:06'),
 	deletedAt: zDate('2024-09-23 07:57:06').nullable(),
 })
 
-const postListSchema = z.object({ posts: z.array(postSchema) })
-const postDetailSchema = z.object({ post: postSchema })
+export const postListSchema = z.object({ posts: z.array(postSchema) })
+export const postDetailSchema = z.object({ post: postSchema })
 
 const postInputSchema = z.object({
 	title: zString('タイトル'),

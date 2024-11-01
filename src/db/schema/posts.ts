@@ -54,7 +54,7 @@ export const postsRelation = relations(postsTable, ({ one, many }) => ({
 		fields: [postsTable.mediaItemId],
 		references: [mediaItemsTable.id],
 	}),
-	postTag: many(postTagsTable),
+	postTags: many(postTagsTable),
 }))
 
 export type PostsTableSchema = typeof postsTable.$inferSelect

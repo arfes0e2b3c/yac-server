@@ -2,7 +2,6 @@ import { sql } from 'drizzle-orm'
 import { Context } from 'hono'
 import { UserInputSchema } from '../../openapi/user'
 import { withDbConnection } from '../db/connection'
-import { postsTable } from '../db/schema/posts'
 import { usersTable } from '../db/schema/users'
 
 class UserRepository {
@@ -29,7 +28,7 @@ class UserRepository {
 		return withDbConnection(c, async (db) => {
 			const [res] = await db
 				.insert(usersTable)
-				.values({ updatedAt: sql`NOW()`, ...body })
+				.values(body)
 				.returning({ id: usersTable.id })
 			return res
 		})

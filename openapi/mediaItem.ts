@@ -66,7 +66,7 @@ export const fetchMediaItemDetailRoute = createRoute({
 })
 
 export const createMediaItemRoute = createRoute({
-	path: '/',
+	path: '/mediaItems',
 	method: 'post',
 	description: 'コンテンツを新規追加する',
 	request: {

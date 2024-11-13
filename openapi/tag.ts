@@ -3,7 +3,7 @@ import { zDate, zString } from './common'
 import { userSchema } from './user'
 
 export const tagSchema = z.object({
-	id: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7').max(26),
+	id: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7').max(36),
 	name: zString('タイトル').max(255),
 	user: userSchema,
 	createdAt: zDate('2024-09-23 07:57:06'),
@@ -17,7 +17,7 @@ const tagDetailSchema = z.object({
 
 const tagInputSchema = z.object({
 	name: zString('タイトル').max(255),
-	userId: zString('自己紹介').max(26),
+	userId: zString('自己紹介'),
 })
 
 const tagListSchema = z.object({ tags: z.array(tagSchema) })
@@ -30,6 +30,7 @@ export const fetchTagListRoute = createRoute({
 	path: '/tags',
 	method: 'get',
 	description: 'タグ一覧を取得する',
+	operationId: 'fetchTagList',
 	responses: {
 		200: {
 			description: 'タグ一覧',
@@ -46,6 +47,7 @@ export const fetchTagDetailRoute = createRoute({
 	path: '/tags/{tagId}',
 	method: 'get',
 	description: 'タグ詳細を取得する',
+	operationId: 'fetchTagDetail',
 	request: {
 		params: z.object({
 			tagId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
@@ -67,6 +69,7 @@ export const createTagRoute = createRoute({
 	path: '/tags',
 	method: 'post',
 	description: 'タグを新規追加する',
+	operationId: 'createTag',
 	request: {
 		body: {
 			required: true,
@@ -95,6 +98,7 @@ export const updateTagRoute = createRoute({
 	path: '/tags/{tagId}',
 	method: 'patch',
 	description: 'タグ情報を更新する',
+	operationId: 'updateTag',
 	request: {
 		body: {
 			required: true,
@@ -126,6 +130,7 @@ export const deleteTagRoute = createRoute({
 	path: '/{tagId}',
 	method: 'delete',
 	description: 'タグを論理削除する',
+	operationId: 'deleteTag',
 	request: {
 		params: z.object({
 			tagId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),

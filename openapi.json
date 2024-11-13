@@ -1,0 +1,1875 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "api",
+    "version": "1.0.0"
+  },
+  "components": {
+    "schemas": {},
+    "parameters": {}
+  },
+  "paths": {
+    "/api/users": {
+      "get": {
+        "operationId": "fetchUserList",
+        "description": "ユーザー一覧を取得する",
+        "responses": {
+          "200": {
+            "description": "ユーザー一覧",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "users": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "01J8F3RR15SSSVV2F3AGMJ4ZE7"
+                          },
+                          "userCode": {
+                            "type": "string",
+                            "maxLength": 255,
+                            "example": "arfes0e2b3c"
+                          },
+                          "name": {
+                            "type": "string",
+                            "maxLength": 255,
+                            "example": "名前"
+                          },
+                          "bio": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "maxLength": 255,
+                            "example": "自己紹介"
+                          },
+                          "lastLoginedAt": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "example": "2024-09-23 07:57:06"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "example": "2024-09-23 07:57:06"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "example": "2024-09-23 07:57:06"
+                          },
+                          "deletedAt": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "example": "2024-09-23 07:57:06"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "userCode",
+                          "name",
+                          "bio",
+                          "lastLoginedAt",
+                          "createdAt",
+                          "updatedAt",
+                          "deletedAt"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "users"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createUser",
+        "description": "ユーザーを新規追加する",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userCode": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "arfes0e2b3c"
+                  },
+                  "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "名前"
+                  },
+                  "bio": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "自己紹介"
+                  }
+                },
+                "required": [
+                  "userCode",
+                  "name",
+                  "bio"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{userId}": {
+      "get": {
+        "operationId": "fetchUserDetail",
+        "description": "ユーザー詳細を取得する",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+            },
+            "required": true,
+            "name": "userId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ユーザー詳細",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "01J8F3RR15SSSVV2F3AGMJ4ZE7"
+                        },
+                        "userCode": {
+                          "type": "string",
+                          "maxLength": 255,
+                          "example": "arfes0e2b3c"
+                        },
+                        "name": {
+                          "type": "string",
+                          "maxLength": 255,
+                          "example": "名前"
+                        },
+                        "bio": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "maxLength": 255,
+                          "example": "自己紹介"
+                        },
+                        "lastLoginedAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "example": "2024-09-23 07:57:06"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2024-09-23 07:57:06"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "example": "2024-09-23 07:57:06"
+                        },
+                        "deletedAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "example": "2024-09-23 07:57:06"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "userCode",
+                        "name",
+                        "bio",
+                        "lastLoginedAt",
+                        "createdAt",
+                        "updatedAt",
+                        "deletedAt"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "user"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateUser",
+        "description": "ユーザー情報を更新する",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+            },
+            "required": true,
+            "name": "userId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userCode": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "arfes0e2b3c"
+                  },
+                  "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "名前"
+                  },
+                  "bio": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "自己紹介"
+                  }
+                },
+                "required": [
+                  "userCode",
+                  "name",
+                  "bio"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/me": {
+      "get": {
+        "operationId": "fetchMe",
+        "description": "認証ユーザー情報を取得する",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+            },
+            "required": true,
+            "name": "userId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ユーザー詳細",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "01J8F3RR15SSSVV2F3AGMJ4ZE7"
+                        },
+                        "userCode": {
+                          "type": "string",
+                          "maxLength": 255,
+                          "example": "arfes0e2b3c"
+                        },
+                        "name": {
+                          "type": "string",
+                          "maxLength": 255,
+                          "example": "名前"
+                        },
+                        "bio": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "maxLength": 255,
+                          "example": "自己紹介"
+                        },
+                        "lastLoginedAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "example": "2024-09-23 07:57:06"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2024-09-23 07:57:06"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "example": "2024-09-23 07:57:06"
+                        },
+                        "deletedAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "example": "2024-09-23 07:57:06"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "userCode",
+                        "name",
+                        "bio",
+                        "lastLoginedAt",
+                        "createdAt",
+                        "updatedAt",
+                        "deletedAt"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "user"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/{userId}": {
+      "delete": {
+        "operationId": "deleteUser",
+        "description": "ユーザーを論理削除する",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+            },
+            "required": true,
+            "name": "userId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Err"
+          }
+        }
+      }
+    },
+    "/api/posts": {
+      "get": {
+        "description": "投稿一覧を取得する",
+        "operationId": "fetchPostList",
+        "responses": {
+          "200": {
+            "description": "投稿一覧",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "posts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "01J8F3RR15SSSVV2F3AGMJ4ZE7"
+                          },
+                          "title": {
+                            "type": "string",
+                            "example": "タイトル"
+                          },
+                          "content": {
+                            "type": "string",
+                            "example": "本文"
+                          },
+                          "locationLabel": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "example": "場所名"
+                          },
+                          "locationPoint": {
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "prefixItems": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "number"
+                              }
+                            ]
+                          },
+                          "music": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+                          },
+                          "imageUrl": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "example": "https://example.com/image.jpg"
+                          },
+                          "relatedUrl": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "example": "https://example.com/related"
+                          },
+                          "visibility": {
+                            "type": "string",
+                            "enum": [
+                              "private",
+                              "public",
+                              "only_followers"
+                            ]
+                          },
+                          "date": {
+                            "type": "string",
+                            "example": "2024-09-23 07:57:06"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "example": "2024-09-23 07:57:06"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "example": "2024-09-23 07:57:06"
+                          },
+                          "deletedAt": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "example": "2024-09-23 07:57:06"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "content",
+                          "locationLabel",
+                          "locationPoint",
+                          "music",
+                          "imageUrl",
+                          "relatedUrl",
+                          "visibility",
+                          "date",
+                          "createdAt",
+                          "updatedAt",
+                          "deletedAt"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "posts"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "投稿を新規追加する",
+        "operationId": "createPost",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "タイトル"
+                  },
+                  "content": {
+                    "type": "string",
+                    "example": "本文"
+                  },
+                  "locationLabel": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "example": "場所名"
+                  },
+                  "locationPoint": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "prefixItems": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ]
+                  },
+                  "music": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+                  },
+                  "imageUrl": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "example": "https://example.com/image.jpg"
+                  },
+                  "relatedUrl": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "example": "https://example.com/related"
+                  },
+                  "userId": {
+                    "type": "string",
+                    "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+                  },
+                  "mediaItemId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+                  },
+                  "visibility": {
+                    "type": "string",
+                    "enum": [
+                      "private",
+                      "public",
+                      "only_followers"
+                    ]
+                  },
+                  "date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "title",
+                  "content",
+                  "locationLabel",
+                  "locationPoint",
+                  "music",
+                  "imageUrl",
+                  "relatedUrl",
+                  "userId",
+                  "mediaItemId",
+                  "visibility",
+                  "date"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/posts/{postId}": {
+      "get": {
+        "description": "投稿詳細を取得する",
+        "operationId": "fetchPostDetail",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+            },
+            "required": true,
+            "name": "postId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "投稿詳細",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "post": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "01J8F3RR15SSSVV2F3AGMJ4ZE7"
+                        },
+                        "title": {
+                          "type": "string",
+                          "example": "タイトル"
+                        },
+                        "content": {
+                          "type": "string",
+                          "example": "本文"
+                        },
+                        "locationLabel": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "example": "場所名"
+                        },
+                        "locationPoint": {
+                          "type": [
+                            "array",
+                            "null"
+                          ],
+                          "prefixItems": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "number"
+                            }
+                          ]
+                        },
+                        "music": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+                        },
+                        "imageUrl": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "example": "https://example.com/image.jpg"
+                        },
+                        "relatedUrl": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "example": "https://example.com/related"
+                        },
+                        "visibility": {
+                          "type": "string",
+                          "enum": [
+                            "private",
+                            "public",
+                            "only_followers"
+                          ]
+                        },
+                        "date": {
+                          "type": "string",
+                          "example": "2024-09-23 07:57:06"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2024-09-23 07:57:06"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "example": "2024-09-23 07:57:06"
+                        },
+                        "deletedAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "example": "2024-09-23 07:57:06"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "title",
+                        "content",
+                        "locationLabel",
+                        "locationPoint",
+                        "music",
+                        "imageUrl",
+                        "relatedUrl",
+                        "visibility",
+                        "date",
+                        "createdAt",
+                        "updatedAt",
+                        "deletedAt"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "post"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "投稿情報を更新する",
+        "operationId": "updatePost",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+            },
+            "required": true,
+            "name": "postId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "タイトル"
+                  },
+                  "content": {
+                    "type": "string",
+                    "example": "本文"
+                  },
+                  "locationLabel": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "example": "場所名"
+                  },
+                  "locationPoint": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "prefixItems": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ]
+                  },
+                  "music": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+                  },
+                  "imageUrl": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "example": "https://example.com/image.jpg"
+                  },
+                  "relatedUrl": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "example": "https://example.com/related"
+                  },
+                  "userId": {
+                    "type": "string",
+                    "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+                  },
+                  "mediaItemId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+                  },
+                  "visibility": {
+                    "type": "string",
+                    "enum": [
+                      "private",
+                      "public",
+                      "only_followers"
+                    ]
+                  },
+                  "date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "title",
+                  "content",
+                  "locationLabel",
+                  "locationPoint",
+                  "music",
+                  "imageUrl",
+                  "relatedUrl",
+                  "userId",
+                  "mediaItemId",
+                  "visibility",
+                  "date"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "投稿を論理削除する",
+        "operationId": "deletePost",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+            },
+            "required": true,
+            "name": "postId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Err"
+          }
+        }
+      }
+    },
+    "/api/tags": {
+      "get": {
+        "description": "タグ一覧を取得する",
+        "operationId": "fetchTagList",
+        "responses": {
+          "200": {
+            "description": "タグ一覧",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "maxLength": 26,
+                            "example": "01J8F3RR15SSSVV2F3AGMJ4ZE7"
+                          },
+                          "name": {
+                            "type": "string",
+                            "maxLength": 255,
+                            "example": "タイトル"
+                          },
+                          "user": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "example": "01J8F3RR15SSSVV2F3AGMJ4ZE7"
+                              },
+                              "userCode": {
+                                "type": "string",
+                                "maxLength": 255,
+                                "example": "arfes0e2b3c"
+                              },
+                              "name": {
+                                "type": "string",
+                                "maxLength": 255,
+                                "example": "名前"
+                              },
+                              "bio": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "maxLength": 255,
+                                "example": "自己紹介"
+                              },
+                              "lastLoginedAt": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "example": "2024-09-23 07:57:06"
+                              },
+                              "createdAt": {
+                                "type": "string",
+                                "example": "2024-09-23 07:57:06"
+                              },
+                              "updatedAt": {
+                                "type": "string",
+                                "example": "2024-09-23 07:57:06"
+                              },
+                              "deletedAt": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "example": "2024-09-23 07:57:06"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "userCode",
+                              "name",
+                              "bio",
+                              "lastLoginedAt",
+                              "createdAt",
+                              "updatedAt",
+                              "deletedAt"
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "example": "2024-09-23 07:57:06"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "example": "2024-09-23 07:57:06"
+                          },
+                          "deletedAt": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "example": "2024-09-23 07:57:06"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "user",
+                          "createdAt",
+                          "updatedAt",
+                          "deletedAt"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "tags"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "タグを新規追加する",
+        "operationId": "createTag",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "タイトル"
+                  },
+                  "userId": {
+                    "type": "string",
+                    "maxLength": 26,
+                    "example": "自己紹介"
+                  }
+                },
+                "required": [
+                  "name",
+                  "userId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tags/{tagId}": {
+      "get": {
+        "description": "タグ詳細を取得する",
+        "operationId": "fetchTagDetail",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+            },
+            "required": true,
+            "name": "tagId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "タグ詳細",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tag": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "maxLength": 26,
+                          "example": "01J8F3RR15SSSVV2F3AGMJ4ZE7"
+                        },
+                        "name": {
+                          "type": "string",
+                          "maxLength": 255,
+                          "example": "タイトル"
+                        },
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "example": "01J8F3RR15SSSVV2F3AGMJ4ZE7"
+                            },
+                            "userCode": {
+                              "type": "string",
+                              "maxLength": 255,
+                              "example": "arfes0e2b3c"
+                            },
+                            "name": {
+                              "type": "string",
+                              "maxLength": 255,
+                              "example": "名前"
+                            },
+                            "bio": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "maxLength": 255,
+                              "example": "自己紹介"
+                            },
+                            "lastLoginedAt": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "example": "2024-09-23 07:57:06"
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "example": "2024-09-23 07:57:06"
+                            },
+                            "updatedAt": {
+                              "type": "string",
+                              "example": "2024-09-23 07:57:06"
+                            },
+                            "deletedAt": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "example": "2024-09-23 07:57:06"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "userCode",
+                            "name",
+                            "bio",
+                            "lastLoginedAt",
+                            "createdAt",
+                            "updatedAt",
+                            "deletedAt"
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2024-09-23 07:57:06"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "example": "2024-09-23 07:57:06"
+                        },
+                        "deletedAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "example": "2024-09-23 07:57:06"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "user",
+                        "createdAt",
+                        "updatedAt",
+                        "deletedAt"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "tag"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "タグ情報を更新する",
+        "operationId": "updateTag",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+            },
+            "required": true,
+            "name": "tagId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "タイトル"
+                  },
+                  "userId": {
+                    "type": "string",
+                    "maxLength": 26,
+                    "example": "自己紹介"
+                  }
+                },
+                "required": [
+                  "name",
+                  "userId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/{tagId}": {
+      "delete": {
+        "description": "タグを論理削除する",
+        "operationId": "deleteTag",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+            },
+            "required": true,
+            "name": "tagId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Err"
+          }
+        }
+      }
+    },
+    "/api/mediaItems": {
+      "get": {
+        "description": "コンテンツ一覧を取得する",
+        "operationId": "fetchMediaItemList",
+        "responses": {
+          "200": {
+            "description": "コンテンツ一覧",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "mediaItems": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "maxLength": 26,
+                            "example": "01J8F3RR15SSSVV2F3AGMJ4ZE7"
+                          },
+                          "title": {
+                            "type": "string",
+                            "maxLength": 255,
+                            "example": "タイトル"
+                          },
+                          "imageUrl": {
+                            "type": "string",
+                            "example": "https://sample.com"
+                          },
+                          "relationCount": {
+                            "type": "number",
+                            "example": 12
+                          },
+                          "posts": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "example": "01J8F3RR15SSSVV2F3AGMJ4ZE7"
+                                },
+                                "title": {
+                                  "type": "string",
+                                  "example": "タイトル"
+                                },
+                                "content": {
+                                  "type": "string",
+                                  "example": "本文"
+                                },
+                                "locationLabel": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "example": "場所名"
+                                },
+                                "locationPoint": {
+                                  "type": [
+                                    "array",
+                                    "null"
+                                  ],
+                                  "prefixItems": [
+                                    {
+                                      "type": "number"
+                                    },
+                                    {
+                                      "type": "number"
+                                    }
+                                  ]
+                                },
+                                "music": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+                                },
+                                "imageUrl": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "example": "https://example.com/image.jpg"
+                                },
+                                "relatedUrl": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "example": "https://example.com/related"
+                                },
+                                "visibility": {
+                                  "type": "string",
+                                  "enum": [
+                                    "private",
+                                    "public",
+                                    "only_followers"
+                                  ]
+                                },
+                                "date": {
+                                  "type": "string",
+                                  "example": "2024-09-23 07:57:06"
+                                },
+                                "createdAt": {
+                                  "type": "string",
+                                  "example": "2024-09-23 07:57:06"
+                                },
+                                "updatedAt": {
+                                  "type": "string",
+                                  "example": "2024-09-23 07:57:06"
+                                },
+                                "deletedAt": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "example": "2024-09-23 07:57:06"
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "title",
+                                "content",
+                                "locationLabel",
+                                "locationPoint",
+                                "music",
+                                "imageUrl",
+                                "relatedUrl",
+                                "visibility",
+                                "date",
+                                "createdAt",
+                                "updatedAt",
+                                "deletedAt"
+                              ]
+                            }
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "example": "2024-09-23 07:57:06"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "example": "2024-09-23 07:57:06"
+                          },
+                          "deletedAt": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "example": "2024-09-23 07:57:06"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "imageUrl",
+                          "relationCount",
+                          "posts",
+                          "createdAt",
+                          "updatedAt",
+                          "deletedAt"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "mediaItems"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "コンテンツを新規追加する",
+        "operationId": "createMediaItem",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "タイトル"
+                  },
+                  "imageUrl": {
+                    "type": "string",
+                    "maxLength": 26,
+                    "example": "http://example.com"
+                  }
+                },
+                "required": [
+                  "title",
+                  "imageUrl"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mediaItems/{mediaItemId}": {
+      "get": {
+        "description": "コンテンツ詳細を取得する",
+        "operationId": "fetchMediaItemDetail",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+            },
+            "required": true,
+            "name": "mediaItemId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "コンテンツ詳細",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "mediaItem": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "maxLength": 26,
+                          "example": "01J8F3RR15SSSVV2F3AGMJ4ZE7"
+                        },
+                        "title": {
+                          "type": "string",
+                          "maxLength": 255,
+                          "example": "タイトル"
+                        },
+                        "imageUrl": {
+                          "type": "string",
+                          "example": "https://sample.com"
+                        },
+                        "relationCount": {
+                          "type": "number",
+                          "example": 12
+                        },
+                        "posts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "example": "01J8F3RR15SSSVV2F3AGMJ4ZE7"
+                              },
+                              "title": {
+                                "type": "string",
+                                "example": "タイトル"
+                              },
+                              "content": {
+                                "type": "string",
+                                "example": "本文"
+                              },
+                              "locationLabel": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "example": "場所名"
+                              },
+                              "locationPoint": {
+                                "type": [
+                                  "array",
+                                  "null"
+                                ],
+                                "prefixItems": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "number"
+                                  }
+                                ]
+                              },
+                              "music": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+                              },
+                              "imageUrl": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "example": "https://example.com/image.jpg"
+                              },
+                              "relatedUrl": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "example": "https://example.com/related"
+                              },
+                              "visibility": {
+                                "type": "string",
+                                "enum": [
+                                  "private",
+                                  "public",
+                                  "only_followers"
+                                ]
+                              },
+                              "date": {
+                                "type": "string",
+                                "example": "2024-09-23 07:57:06"
+                              },
+                              "createdAt": {
+                                "type": "string",
+                                "example": "2024-09-23 07:57:06"
+                              },
+                              "updatedAt": {
+                                "type": "string",
+                                "example": "2024-09-23 07:57:06"
+                              },
+                              "deletedAt": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "example": "2024-09-23 07:57:06"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "title",
+                              "content",
+                              "locationLabel",
+                              "locationPoint",
+                              "music",
+                              "imageUrl",
+                              "relatedUrl",
+                              "visibility",
+                              "date",
+                              "createdAt",
+                              "updatedAt",
+                              "deletedAt"
+                            ]
+                          }
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2024-09-23 07:57:06"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "example": "2024-09-23 07:57:06"
+                        },
+                        "deletedAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "example": "2024-09-23 07:57:06"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "title",
+                        "imageUrl",
+                        "relationCount",
+                        "posts",
+                        "createdAt",
+                        "updatedAt",
+                        "deletedAt"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "mediaItem"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "コンテンツ情報を更新する",
+        "operationId": "updateMediaItem",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+            },
+            "required": true,
+            "name": "mediaItemId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "タイトル"
+                  },
+                  "imageUrl": {
+                    "type": "string",
+                    "maxLength": 26,
+                    "example": "http://example.com"
+                  }
+                },
+                "required": [
+                  "title",
+                  "imageUrl"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/{mediaItemId}": {
+      "delete": {
+        "description": "コンテンツを論理削除する",
+        "operationId": "deleteMediaItem",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "01J8F3CJR0NJM89W64KYWSEJVA"
+            },
+            "required": true,
+            "name": "mediaItemId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Err"
+          }
+        }
+      }
+    }
+  },
+  "webhooks": {}
+}

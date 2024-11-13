@@ -3,11 +3,10 @@ import { zDate, zNum, zString } from './common'
 import { postSchema } from './post'
 
 export const mediaItemSchema = z.object({
-	id: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7').max(26),
+	id: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7').max(36),
 	title: zString('タイトル').max(255),
 	imageUrl: zString('https://sample.com'),
 	relationCount: zNum(12),
-	posts: z.array(postSchema),
 	createdAt: zDate('2024-09-23 07:57:06'),
 	updatedAt: zDate('2024-09-23 07:57:06'),
 	deletedAt: zDate('2024-09-23 07:57:06').nullable(),
@@ -19,7 +18,7 @@ const mediaItemDetailSchema = z.object({
 
 const mediaItemInputSchema = z.object({
 	title: zString('タイトル').max(255),
-	imageUrl: zString('http://example.com').max(26),
+	imageUrl: zString('http://example.com'),
 })
 
 const mediaItemListSchema = z.object({ mediaItems: z.array(mediaItemSchema) })
@@ -32,9 +31,32 @@ export const fetchMediaItemListRoute = createRoute({
 	path: '/mediaItems',
 	method: 'get',
 	description: 'コンテンツ一覧を取得する',
+	operationId: 'fetchMediaItemList',
 	responses: {
 		200: {
 			description: 'コンテンツ一覧',
+			content: {
+				'application/json': {
+					schema: mediaItemListSchema,
+				},
+			},
+		},
+	},
+})
+
+export const searchMediaItemListRoute = createRoute({
+	path: '/mediaItems/search',
+	method: 'get',
+	description: 'コンテンツを検索する',
+	operationId: 'searchMediaItemList',
+	request: {
+		query: z.object({
+			q: zString('キーワード'),
+		}),
+	},
+	responses: {
+		200: {
+			description: '検索結果',
 			content: {
 				'application/json': {
 					schema: mediaItemListSchema,
@@ -48,6 +70,7 @@ export const fetchMediaItemDetailRoute = createRoute({
 	path: '/mediaItems/{mediaItemId}',
 	method: 'get',
 	description: 'コンテンツ詳細を取得する',
+	operationId: 'fetchMediaItemDetail',
 	request: {
 		params: z.object({
 			mediaItemId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
@@ -69,6 +92,7 @@ export const createMediaItemRoute = createRoute({
 	path: '/mediaItems',
 	method: 'post',
 	description: 'コンテンツを新規追加する',
+	operationId: 'createMediaItem',
 	request: {
 		body: {
 			required: true,
@@ -97,6 +121,7 @@ export const updateMediaItemRoute = createRoute({
 	path: '/mediaItems/{mediaItemId}',
 	method: 'patch',
 	description: 'コンテンツ情報を更新する',
+	operationId: 'updateMediaItem',
 	request: {
 		body: {
 			required: true,
@@ -125,9 +150,10 @@ export const updateMediaItemRoute = createRoute({
 })
 
 export const deleteMediaItemRoute = createRoute({
-	path: '/{mediaItemId}',
+	path: '/mediaItems/{mediaItemId}',
 	method: 'delete',
 	description: 'コンテンツを論理削除する',
+	operationId: 'deleteMediaItem',
 	request: {
 		params: z.object({
 			mediaItemId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),

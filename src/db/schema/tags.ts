@@ -5,12 +5,12 @@ import { postTagsTable } from './postTags'
 import { usersTable } from './users'
 
 export const tagsTable = pgTable('tags', {
-	id: varchar('id', { length: 26 })
+	id: varchar('id', { length: 36 })
 		.notNull()
 		.primaryKey()
 		.$defaultFn(() => ulid()),
 	name: varchar('name', { length: 255 }).notNull().unique(),
-	userId: varchar('user_id', { length: 26 })
+	userId: varchar('user_id', { length: 36 })
 		.references(() => usersTable.id, {
 			onDelete: 'cascade',
 		})

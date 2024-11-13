@@ -4,6 +4,7 @@ import {
 	deleteMediaItemRoute,
 	fetchMediaItemDetailRoute,
 	fetchMediaItemListRoute,
+	searchMediaItemListRoute,
 	updateMediaItemRoute,
 } from '../../openapi/mediaItem'
 import { handleErrors } from '../error'
@@ -14,6 +15,14 @@ const app = new OpenAPIHono()
 app.openapi(fetchMediaItemListRoute, async (c) => {
 	return handleErrors(async (ctx) => {
 		const res = await svc.mediaItem.getAll(ctx)
+		return ctx.json({ mediaItems: res })
+	}, c)
+})
+
+app.openapi(searchMediaItemListRoute, async (c) => {
+	return handleErrors(async (ctx) => {
+		const { q } = ctx.req.valid('query')
+		const res = await svc.mediaItem.getBySearch(ctx, q)
 		return ctx.json({ mediaItems: res })
 	}, c)
 })

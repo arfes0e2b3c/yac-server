@@ -4,7 +4,7 @@ import { ulid } from 'ulid'
 import { postsTable } from './posts'
 
 export const mediaItemsTable = pgTable('media_items', {
-	id: varchar('id', { length: 26 })
+	id: varchar('id', { length: 36 })
 		.notNull()
 		.primaryKey()
 		.$defaultFn(() => ulid()),

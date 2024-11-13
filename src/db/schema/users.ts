@@ -5,13 +5,13 @@ import { postsTable } from './posts'
 import { tagsTable } from './tags'
 
 export const usersTable = pgTable('users', {
-	id: varchar('id', { length: 26 })
+	id: varchar('id', { length: 36 })
 		.notNull()
 		.primaryKey()
 		.$defaultFn(() => ulid()),
 	userCode: varchar('user_code', { length: 255 }).notNull().unique(),
 	name: varchar('name', { length: 255 }).notNull(),
-	bio: varchar('bio', { length: 255 }).notNull(),
+	bio: varchar('bio', { length: 255 }),
 	lastLoginedAt: timestamp('last_logined_at').default(sql`NULL`),
 	createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
 	updatedAt: timestamp('updated_at')

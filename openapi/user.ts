@@ -31,6 +31,7 @@ export type UserInputSchema = z.infer<typeof userInputSchema>
 export const fetchUserListRoute = createRoute({
 	path: '/users',
 	method: 'get',
+	operationId: 'fetchUserList',
 	description: 'ユーザー一覧を取得する',
 	responses: {
 		200: {
@@ -47,6 +48,7 @@ export const fetchUserListRoute = createRoute({
 export const fetchUserDetailRoute = createRoute({
 	path: '/users/{userId}',
 	method: 'get',
+	operationId: 'fetchUserDetail',
 	description: 'ユーザー詳細を取得する',
 	request: {
 		params: z.object({
@@ -68,6 +70,7 @@ export const fetchUserDetailRoute = createRoute({
 export const fetchMeRoute = createRoute({
 	path: '/users/me',
 	method: 'get',
+	operationId: 'fetchMe',
 	description: '認証ユーザー情報を取得する',
 	request: {
 		params: z.object({
@@ -89,6 +92,7 @@ export const fetchMeRoute = createRoute({
 export const createUserRoute = createRoute({
 	path: '/users',
 	method: 'post',
+	operationId: 'createUser',
 	description: 'ユーザーを新規追加する',
 	request: {
 		body: {
@@ -117,6 +121,7 @@ export const createUserRoute = createRoute({
 export const updateUserRoute = createRoute({
 	path: '/users/{userId}',
 	method: 'patch',
+	operationId: 'updateUser',
 	description: 'ユーザー情報を更新する',
 	request: {
 		body: {
@@ -148,6 +153,7 @@ export const updateUserRoute = createRoute({
 export const deleteUserRoute = createRoute({
 	path: '/{userId}',
 	method: 'delete',
+	operationId: 'deleteUser',
 	description: 'ユーザーを論理削除する',
 	request: {
 		params: z.object({

@@ -1,4 +1,5 @@
 import { relations, sql } from 'drizzle-orm'
+import { date } from 'drizzle-orm/mysql-core'
 import { pgEnum, pgTable, point, timestamp, varchar } from 'drizzle-orm/pg-core'
 import { ulid } from 'ulid'
 import { mediaItemsTable } from './mediaItems'
@@ -12,31 +13,31 @@ export const visibilityEnum = pgEnum('visibility', [
 ])
 
 export const postsTable = pgTable('posts', {
-	id: varchar('id', { length: 26 })
+	id: varchar('id', { length: 36 })
 		.notNull()
 		.primaryKey()
 		.$defaultFn(() => ulid()),
-	title: varchar('title', { length: 255 }).notNull(),
 	content: varchar('content', { length: 1000 }).notNull(),
 	locationLabel: varchar('location_label', { length: 255 }),
 	locationPoint: point('location_point'),
-	music: varchar('music', { length: 26 }).references(() => mediaItemsTable.id, {
+	music: varchar('music', { length: 36 }).references(() => mediaItemsTable.id, {
 		onDelete: 'cascade',
 	}),
 	imageUrl: varchar('image_url', { length: 255 }),
 	relatedUrl: varchar('related_url', { length: 255 }),
-	userId: varchar('user_id', { length: 26 })
+	userId: varchar('user_id', { length: 36 })
 		.references(() => usersTable.id, {
 			onDelete: 'cascade',
 		})
 		.notNull(),
-	mediaItemId: varchar('media_item_id', { length: 26 }).references(
+	mediaItemId: varchar('media_item_id', { length: 36 }).references(
 		() => mediaItemsTable.id,
 		{
 			onDelete: 'cascade',
 		}
 	),
 	visibility: visibilityEnum().notNull().default('public'),
+	date: timestamp('date'),
 	createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
 	updatedAt: timestamp('updated_at')
 		.default(sql`CURRENT_TIMESTAMP`)

@@ -9,8 +9,25 @@ class PostService {
 	async getByPostId(c: Context, postId: string) {
 		return await repo.post.getByPostId(c, postId)
 	}
-	async getByUserId(c: Context, userId: string) {
-		return await repo.post.getByUserId(c, userId)
+	async getByUserId(c: Context, userId: string, limit: number, offset: number) {
+		return await repo.post.getByUserId(c, userId, limit, offset)
+	}
+	async getByUserIdInRegion(
+		c: Context,
+		userId: string,
+		minLat: number,
+		maxLat: number,
+		minLng: number,
+		maxLng: number
+	) {
+		return await repo.post.getByUserIdInRegion(
+			c,
+			userId,
+			minLat,
+			maxLat,
+			minLng,
+			maxLng
+		)
 	}
 	async create(c: Context, body: PostInputSchema) {
 		return await repo.post.create(c, body)

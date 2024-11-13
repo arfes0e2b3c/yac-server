@@ -6,12 +6,12 @@ import { tagsTable } from './tags'
 export const postTagsTable = pgTable(
 	'post_tags',
 	{
-		postId: varchar('post_id', { length: 26 })
+		postId: varchar('post_id', { length: 36 })
 			.notNull()
 			.references(() => postsTable.id, {
 				onDelete: 'cascade',
 			}),
-		tagId: varchar('tag_id', { length: 26 })
+		tagId: varchar('tag_id', { length: 36 })
 			.notNull()
 			.references(() => tagsTable.id, {
 				onDelete: 'cascade',

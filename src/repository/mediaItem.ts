@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm'
+import { eq, ilike, sql } from 'drizzle-orm'
 import { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { MediaItemInputSchema } from '../../openapi/mediaItem'
@@ -30,6 +30,14 @@ class MediaItemRepository {
 				})
 			}
 			return res
+		})
+	}
+	async getBySearch(c: Context, q: string) {
+		return withDbConnection(c, async (db) => {
+			return await db
+				.select()
+				.from(mediaItemsTable)
+				.where(ilike(mediaItemsTable.title, `%${q}%`))
 		})
 	}
 	async create(c: Context, body: MediaItemInputSchema) {

@@ -5,6 +5,8 @@ import {
 	deletePostRoute,
 	fetchPostDetailRoute,
 	fetchPostListRoute,
+	fetchUserPostListInRegionRoute,
+	fetchUserPostListRoute,
 	updatePostRoute,
 } from '../../openapi/post'
 import { handleErrors } from '../error'
@@ -14,9 +16,59 @@ const app = new OpenAPIHono()
 
 app.openapi(fetchPostListRoute, async (c) => {
 	return handleErrors(async (ctx) => {
-		const res = await svc.post.getAll(ctx)
-		console.log(res)
-		return ctx.json({ posts: res })
+		const { limit, offset } = ctx.req.valid('query')
+		const { res, totalCount } = await svc.post.getAll(ctx)
+		const limitNum = Number(limit)
+		const offsetNum = Number(offset)
+		return ctx.json({
+			posts: res,
+			limit: limitNum,
+			offset: offsetNum,
+			totalCount,
+		})
+	}, c)
+})
+
+app.openapi(fetchUserPostListRoute, async (c) => {
+	return handleErrors(async (ctx) => {
+		const { userId } = ctx.req.valid('param')
+		const { limit, offset } = ctx.req.valid('query')
+		const limitNum = Number(limit)
+		const offsetNum = Number(offset)
+		const { res, totalCount } = await svc.post.getByUserId(
+			ctx,
+			userId,
+			limitNum,
+			offsetNum
+		)
+		return ctx.json({
+			posts: res,
+			limit: limitNum,
+			offset: offsetNum,
+			totalCount,
+		})
+	}, c)
+})
+
+app.openapi(fetchUserPostListInRegionRoute, async (c) => {
+	return handleErrors(async (ctx) => {
+		const { userId } = ctx.req.valid('param')
+		const { limit, minLat, maxLat, minLng, maxLng } = ctx.req.valid('query')
+		const minLatNum = Number(minLat)
+		const maxLatNum = Number(maxLat)
+		const minLngNum = Number(minLng)
+		const maxLngNum = Number(maxLng)
+		const res = await svc.post.getByUserIdInRegion(
+			ctx,
+			userId,
+			minLatNum,
+			maxLatNum,
+			minLngNum,
+			maxLngNum
+		)
+		return ctx.json({
+			posts: res,
+		})
 	}, c)
 })
 

@@ -9,6 +9,12 @@ class MediaItemService {
 	async getById(c: Context, mediaItemId: string) {
 		return await repo.mediaItem.getById(c, mediaItemId)
 	}
+	// async getBySearch(c: Context, q: string) {
+	// 	return await repo.mediaItem.getBySearch(c, q)
+	// }
+	async getBySearch(c: Context, q: string) {
+		return await repo.mediaItem.getBySearch(c, q)
+	}
 	async create(c: Context, body: MediaItemInputSchema) {
 		return await repo.mediaItem.create(c, body)
 	}

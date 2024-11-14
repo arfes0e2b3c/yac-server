@@ -101,10 +101,7 @@ export const fetchUserPostListRoute = createRoute({
 		},
 	},
 })
-// 35.296149
-// 35.318298
-// 139.2356090
-// 139.2547412
+
 export const fetchUserPostListInRegionRoute = createRoute({
 	path: '/users/{userId}/posts/region',
 	method: 'get',

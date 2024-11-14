@@ -1,6 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi'
-import { min } from 'drizzle-orm'
-import { zDate, zString } from './common'
+import { zDate, zNum, zString } from './common'
 import { mediaItemSchema } from './mediaItem'
 
 export const postSchema = z.object({
@@ -20,9 +19,9 @@ export const postSchema = z.object({
 
 export const postListSchema = z.object({
 	posts: z.array(postSchema),
-	limit: z.number(),
-	offset: z.number(),
-	totalCount: z.number(),
+	limit: zNum(10),
+	offset: zNum(0),
+	totalCount: zNum(100),
 })
 
 export const userPostInRegionListScema = z.object({

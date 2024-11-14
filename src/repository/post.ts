@@ -106,11 +106,11 @@ class PostRepository {
 				limit,
 				offset,
 			})
-			const countRes = await db
+			const [countRes] = await db
 				.select({ count: count() })
 				.from(postsTable)
 				.where(where)
-			return { res: postRes, totalCount: countRes[0].count }
+			return { res: postRes, totalCount: countRes.count }
 		})
 	}
 

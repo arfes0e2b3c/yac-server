@@ -14,16 +14,40 @@ const app = new OpenAPIHono()
 
 app.openapi(fetchMediaItemListRoute, async (c) => {
 	return handleErrors(async (ctx) => {
-		const res = await svc.mediaItem.getAll(ctx)
-		return ctx.json({ mediaItems: res })
+		const { limit, offset } = ctx.req.valid('query')
+		const limitNum = Number(limit)
+		const offsetNum = Number(offset)
+		const { res, totalCount } = await svc.mediaItem.getAll(
+			ctx,
+			limitNum,
+			offsetNum
+		)
+		return ctx.json({
+			mediaItems: res,
+			limit: limitNum,
+			offset: offsetNum,
+			totalCount,
+		})
 	}, c)
 })
 
 app.openapi(searchMediaItemListRoute, async (c) => {
 	return handleErrors(async (ctx) => {
-		const { q } = ctx.req.valid('query')
-		const res = await svc.mediaItem.getBySearch(ctx, q)
-		return ctx.json({ mediaItems: res })
+		const { q, limit, offset } = ctx.req.valid('query')
+		const limitNum = Number(limit)
+		const offsetNum = Number(offset)
+		const { res, totalCount } = await svc.mediaItem.getBySearch(
+			ctx,
+			q,
+			limitNum,
+			offsetNum
+		)
+		return ctx.json({
+			mediaItems: res,
+			limit: limitNum,
+			offset: offsetNum,
+			totalCount,
+		})
 	}, c)
 })
 

@@ -1,4 +1,4 @@
-import { eq, ilike, sql } from 'drizzle-orm'
+import { count, eq, ilike, sql } from 'drizzle-orm'
 import { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { MediaItemInputSchema } from '../../openapi/mediaItem'
@@ -6,14 +6,19 @@ import { withDbConnection } from '../db/connection'
 import { mediaItemsTable } from '../db/schema/mediaItems'
 
 class MediaItemRepository {
-	async getAll(c: Context) {
+	async getAll(c: Context, limit: number, offset: number) {
+		const where = sql`${mediaItemsTable.deletedAt} IS NULL`
 		return withDbConnection(c, async (db) => {
-			return await db.query.mediaItemsTable.findMany({
-				with: {
-					posts: true,
-				},
-				where: sql`${mediaItemsTable.deletedAt} IS NULL`,
+			const mediaItemRes = await db.query.mediaItemsTable.findMany({
+				where,
+				limit,
+				offset,
 			})
+			const [countRes] = await db
+				.select({ count: count() })
+				.from(mediaItemsTable)
+				.where(where)
+			return { res: mediaItemRes, totalCount: countRes.count }
 		})
 	}
 	async getById(c: Context, mediaItemId: string) {
@@ -32,12 +37,20 @@ class MediaItemRepository {
 			return res
 		})
 	}
-	async getBySearch(c: Context, q: string) {
+	async getBySearch(c: Context, q: string, limit: number, offset: number) {
+		const where = ilike(mediaItemsTable.title, `%${q}%`)
 		return withDbConnection(c, async (db) => {
-			return await db
+			const mediaItemRes = await db
 				.select()
 				.from(mediaItemsTable)
-				.where(ilike(mediaItemsTable.title, `%${q}%`))
+				.where(where)
+				.limit(limit)
+				.offset(offset)
+			const [countRes] = await db
+				.select({ count: count() })
+				.from(mediaItemsTable)
+				.where(where)
+			return { res: mediaItemRes, totalCount: countRes.count }
 		})
 	}
 	async create(c: Context, body: MediaItemInputSchema) {

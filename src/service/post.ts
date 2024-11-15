@@ -29,6 +29,14 @@ class PostService {
 			maxLng
 		)
 	}
+	async getByMediaItemId(
+		c: Context,
+		limit: number,
+		offset: number,
+		mediaItemId: string
+	) {
+		return await repo.post.getByMediaItemId(c, limit, offset, mediaItemId)
+	}
 	async create(c: Context, body: PostInputSchema) {
 		return await repo.post.create(c, body)
 	}

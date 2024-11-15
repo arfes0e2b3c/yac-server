@@ -133,6 +133,32 @@ class PostRepository {
 		})
 	}
 
+	async getByMediaItemId(
+		c: Context,
+		limit: number,
+		offset: number,
+		mediaItemId: string
+	) {
+		return withDbConnection(c, async (db) => {
+			const where = sql`${postsTable.mediaItemId} = ${mediaItemId} and ${postsTable.deletedAt} IS NULL`
+			const postRes = await db.query.postsTable.findMany({
+				columns: {
+					userId: false,
+				},
+				orderBy: [desc(postsTable.createdAt)],
+				where,
+				limit,
+				offset,
+			})
+			console.log(postRes)
+			const [countRes] = await db
+				.select({ count: count() })
+				.from(postsTable)
+				.where(where)
+			return { res: postRes, totalCount: countRes.count }
+		})
+	}
+
 	async create(c: Context, body: PostInputSchema) {
 		return withDbConnection(c, async (db) => {
 			const [res] = await db

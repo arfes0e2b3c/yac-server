@@ -130,6 +130,32 @@ export const fetchUserPostListInRegionRoute = createRoute({
 	},
 })
 
+export const fetchMediaItemPostListRoute = createRoute({
+	path: '/mediaItems/{mediaItemId}/posts',
+	method: 'get',
+	description: 'コンテンツに紐づく投稿一覧を取得する',
+	operationId: 'fetchMediaItemPostList',
+	request: {
+		query: z.object({
+			limit: zString('10').default('10'),
+			offset: zString('0').default('0'),
+		}),
+		params: z.object({
+			mediaItemId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
+		}),
+	},
+	responses: {
+		200: {
+			description: 'コンテンツに紐づく投稿一覧',
+			content: {
+				'application/json': {
+					schema: postListSchema,
+				},
+			},
+		},
+	},
+})
+
 export const fetchPostDetailRoute = createRoute({
 	path: '/posts/{postId}',
 	method: 'get',

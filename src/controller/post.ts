@@ -3,6 +3,7 @@ import { OpenAPIHono } from '@hono/zod-openapi'
 import {
 	createPostRoute,
 	deletePostRoute,
+	fetchMediaItemPostListRoute,
 	fetchPostDetailRoute,
 	fetchPostListRoute,
 	fetchUserPostListInRegionRoute,
@@ -77,6 +78,27 @@ app.openapi(fetchPostDetailRoute, async (c) => {
 		const { postId } = ctx.req.valid('param')
 		const res = await svc.post.getByPostId(ctx, postId)
 		return ctx.json({ post: res })
+	}, c)
+})
+
+app.openapi(fetchMediaItemPostListRoute, async (c) => {
+	return handleErrors(async (ctx) => {
+		const { mediaItemId } = ctx.req.valid('param')
+		const { limit, offset } = ctx.req.valid('query')
+		const limitNum = Number(limit)
+		const offsetNum = Number(offset)
+		const { res, totalCount } = await svc.post.getByMediaItemId(
+			ctx,
+			limitNum,
+			offsetNum,
+			mediaItemId
+		)
+		return ctx.json({
+			posts: res,
+			limit: limitNum,
+			offset: offsetNum,
+			totalCount,
+		})
 	}, c)
 })
 

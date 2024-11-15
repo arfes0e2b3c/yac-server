@@ -57,8 +57,8 @@ export const fetchPostListRoute = createRoute({
 	operationId: 'fetchPostList',
 	request: {
 		query: z.object({
-			limit: z.string().default('10'),
-			offset: z.string().default('0'),
+			limit: zString('10').default('10'),
+			offset: zString('0').default('0'),
 		}),
 	},
 	responses: {

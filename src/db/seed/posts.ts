@@ -11,7 +11,6 @@ export const fakePost: (
 	content: faker.lorem.sentence(),
 	locationLabel: faker.location.city(),
 	locationPoint: [faker.location.latitude(), faker.location.longitude()],
-	music: mediaItemIds[Math.floor(Math.random() * mediaItemIds.length)],
 	imageUrl: faker.image.url({ width: 640, height: 480 }),
 	relatedUrl: faker.internet.url(),
 

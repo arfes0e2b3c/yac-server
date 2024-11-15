@@ -57,6 +57,20 @@
       "when": 1731047370459,
       "tag": "0007_tidy_scalphunter",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1731585483935,
+      "tag": "0008_regular_king_bedlam",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1731585904272,
+      "tag": "0009_optimal_captain_stacy",
+      "breakpoints": true
     }
   ]
 }

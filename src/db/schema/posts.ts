@@ -20,9 +20,6 @@ export const postsTable = pgTable('posts', {
 	content: varchar('content', { length: 1000 }).notNull(),
 	locationLabel: varchar('location_label', { length: 255 }),
 	locationPoint: point('location_point'),
-	music: varchar('music', { length: 36 }).references(() => mediaItemsTable.id, {
-		onDelete: 'cascade',
-	}),
 	imageUrl: varchar('image_url', { length: 255 }),
 	relatedUrl: varchar('related_url', { length: 255 }),
 	userId: varchar('user_id', { length: 36 })

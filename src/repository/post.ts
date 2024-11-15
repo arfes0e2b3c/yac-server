@@ -1,8 +1,7 @@
-import { env } from 'bun'
 import { count, desc, sql } from 'drizzle-orm'
 import { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { PostInputSchema, PostListSchema, PostSchema } from '../../openapi/post'
+import { PostInputSchema } from '../../openapi/post'
 import { withDbConnection } from '../db/connection'
 import { postsTable } from '../db/schema/posts'
 

@@ -1,5 +1,4 @@
 import { relations, sql } from 'drizzle-orm'
-import { date } from 'drizzle-orm/mysql-core'
 import { pgEnum, pgTable, point, timestamp, varchar } from 'drizzle-orm/pg-core'
 import { ulid } from 'ulid'
 import { mediaItemsTable } from './mediaItems'

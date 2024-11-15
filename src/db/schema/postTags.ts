@@ -9,12 +9,12 @@ export const postTagsTable = pgTable(
 		postId: varchar('post_id', { length: 36 })
 			.notNull()
 			.references(() => postsTable.id, {
-				onDelete: 'cascade',
+				onDelete: 'set null',
 			}),
 		tagId: varchar('tag_id', { length: 36 })
 			.notNull()
 			.references(() => tagsTable.id, {
-				onDelete: 'cascade',
+				onDelete: 'set null',
 			}),
 		createdAt: timestamp('created_at')
 			.default(sql`CURRENT_TIMESTAMP`)

@@ -27,15 +27,14 @@ export const postsTable = pgTable('posts', {
 	relatedUrl: varchar('related_url', { length: 255 }),
 	userId: varchar('user_id', { length: 36 })
 		.references(() => usersTable.id, {
-			onDelete: 'cascade',
+			onDelete: 'set null',
 		})
 		.notNull(),
-	mediaItemId: varchar('media_item_id', { length: 36 }).references(
-		() => mediaItemsTable.id,
-		{
-			onDelete: 'cascade',
-		}
-	),
+	mediaItemId: varchar('media_item_id', { length: 36 })
+		.references(() => mediaItemsTable.id, {
+			onDelete: 'set null',
+		})
+		.default(sql`NULL`),
 	visibility: visibilityEnum().notNull().default('public'),
 	date: timestamp('date'),
 	createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),

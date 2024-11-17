@@ -1,10 +1,13 @@
 import { swaggerUI } from '@hono/swagger-ui'
 import { OpenAPIHono } from '@hono/zod-openapi'
+import { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { mediaItemApp } from './controller/mediaItem'
 import { postApp } from './controller/post'
 import { tagApp } from './controller/tag'
 import { userApp } from './controller/user'
+import { svc } from './service'
+import { Env } from './types'
 
 const app = new OpenAPIHono().basePath('/api')
 
@@ -38,4 +41,15 @@ app.get(
 	})
 )
 
-export default app
+// scheduledが個別のappからは呼び出せないので仕方なくここに書いている
+const scheduled: ExportedHandlerScheduledHandler<Env> = async (_, env, c) => {
+	const ctx = {
+		env,
+	} as Context
+	c.waitUntil(svc.mediaItem.countMediaItemRelations(ctx))
+}
+
+export default {
+	fetch: app.fetch,
+	scheduled,
+}

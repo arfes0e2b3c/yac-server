@@ -1,9 +1,10 @@
-import { count, eq, ilike, sql } from 'drizzle-orm'
+import { count, desc, eq, ilike, sql } from 'drizzle-orm'
 import { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { MediaItemInputSchema } from '../../openapi/mediaItem'
 import { withDbConnection } from '../db/connection'
 import { mediaItemsTable } from '../db/schema/mediaItems'
+import { postsTable } from '../db/schema/posts'
 
 class MediaItemRepository {
 	async getAll(c: Context, limit: number, offset: number) {
@@ -13,6 +14,7 @@ class MediaItemRepository {
 				where,
 				limit,
 				offset,
+				orderBy: [desc(mediaItemsTable.relationCount)],
 			})
 			const [countRes] = await db
 				.select({ count: count() })
@@ -46,6 +48,7 @@ class MediaItemRepository {
 				.where(where)
 				.limit(limit)
 				.offset(offset)
+				.orderBy(desc(mediaItemsTable.relationCount))
 			const [countRes] = await db
 				.select({ count: count() })
 				.from(mediaItemsTable)
@@ -87,6 +90,20 @@ class MediaItemRepository {
 				.where(sql`${mediaItemsTable.id} = ${mediaItemId}`)
 				.returning({ id: mediaItemsTable.id })
 			return res
+		})
+	}
+	async countMediaItemRelations(c: Context) {
+		return withDbConnection(c, async (db) => {
+			await db.update(mediaItemsTable).set({
+				relationCount: sql`${db
+					.select({
+						count: count(),
+					})
+					.from(postsTable)
+					.where(eq(postsTable.mediaItemId, mediaItemsTable.id))}`,
+				updatedAt: sql`NOW()`,
+			})
+			return true
 		})
 	}
 }

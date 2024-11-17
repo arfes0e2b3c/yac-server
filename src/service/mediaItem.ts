@@ -28,6 +28,9 @@ class MediaItemService {
 	async deleteByMediaItemId(c: Context, mediaItemId: string) {
 		return await repo.mediaItem.deleteByMediaItemId(c, mediaItemId)
 	}
+	async countMediaItemRelations(c: Context) {
+		return await repo.mediaItem.countMediaItemRelations(c)
+	}
 }
 
 export const mediaItemSvc = new MediaItemService()

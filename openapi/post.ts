@@ -17,7 +17,11 @@ export const postSchema = z.object({
 })
 
 export const postListSchema = z.object({
-	posts: z.array(postSchema),
+	posts: z.array(
+		postSchema.extend({
+			mediaItem: mediaItemSchema.nullable(),
+		})
+	),
 	limit: zNum(10),
 	offset: zNum(0),
 	totalCount: zNum(100),

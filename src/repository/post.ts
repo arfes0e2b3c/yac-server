@@ -85,20 +85,20 @@ class PostRepository {
 					mediaItemId: false,
 				},
 				with: {
-					user: true,
+					// user: true,
 					mediaItem: true,
-					postTags: {
-						columns: {
-							postId: false,
-							tagId: false,
-							createdAt: false,
-							updatedAt: false,
-							deletedAt: false,
-						},
-						with: {
-							tag: true,
-						},
-					},
+					// postTags: {
+					// 	columns: {
+					// 		postId: false,
+					// 		tagId: false,
+					// 		createdAt: false,
+					// 		updatedAt: false,
+					// 		deletedAt: false,
+					// 	},
+					// 	with: {
+					// 		tag: true,
+					// 	},
+					// },
 				},
 				orderBy: [desc(postsTable.createdAt)],
 				where: sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL`,

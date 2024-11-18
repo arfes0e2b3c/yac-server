@@ -1,6 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { zDate, zNum, zString } from './common'
-import { postSchema } from './post'
 
 export const mediaItemSchema = z.object({
 	id: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7').max(36),

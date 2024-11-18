@@ -41,6 +41,26 @@ class PostRepository {
 		})
 	}
 
+	async getAllInRegion(
+		c: Context,
+		limit: number,
+		minLat: number,
+		maxLat: number,
+		minLng: number,
+		maxLng: number
+	) {
+		return withDbConnection(c, async (db) => {
+			return await db.query.postsTable.findMany({
+				columns: {
+					mediaItemId: false,
+				},
+				orderBy: [desc(postsTable.createdAt)],
+				where: sql`${postsTable.deletedAt} IS NULL and ${postsTable.locationPoint} <@ box(point(${minLat}, ${minLng}), point(${maxLat}, ${maxLng}))`,
+				limit,
+			})
+		})
+	}
+
 	async getByPostId(c: Context, postId: string) {
 		return withDbConnection(c, async (db) => {
 			const res = await db.query.postsTable.findFirst({
@@ -115,6 +135,7 @@ class PostRepository {
 
 	async getByUserIdInRegion(
 		c: Context,
+		limit: number,
 		userId: string,
 		minLat: number,
 		maxLat: number,
@@ -128,6 +149,7 @@ class PostRepository {
 				},
 				orderBy: [desc(postsTable.createdAt)],
 				where: sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and ${postsTable.locationPoint} <@ box(point(${minLat}, ${minLng}), point(${maxLat}, ${maxLng}))`,
+				limit,
 			})
 		})
 	}

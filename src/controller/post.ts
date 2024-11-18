@@ -5,6 +5,7 @@ import {
 	deletePostRoute,
 	fetchMediaItemPostListRoute,
 	fetchPostDetailRoute,
+	fetchPostListInRegionRoute,
 	fetchPostListRoute,
 	fetchUserPostListInRegionRoute,
 	fetchUserPostListRoute,
@@ -27,6 +28,26 @@ app.openapi(fetchPostListRoute, async (c) => {
 			offset: offsetNum,
 			totalCount,
 		})
+	}, c)
+})
+
+app.openapi(fetchPostListInRegionRoute, async (c) => {
+	return handleErrors(async (ctx) => {
+		const { limit, minLat, maxLat, minLng, maxLng } = ctx.req.valid('query')
+		const limitNum = Number(limit)
+		const minLatNum = Number(minLat)
+		const maxLatNum = Number(maxLat)
+		const minLngNum = Number(minLng)
+		const maxLngNum = Number(maxLng)
+		const res = await svc.post.getAllInRegion(
+			ctx,
+			limitNum,
+			minLatNum,
+			maxLatNum,
+			minLngNum,
+			maxLngNum
+		)
+		return ctx.json({ posts: res })
 	}, c)
 })
 
@@ -55,12 +76,14 @@ app.openapi(fetchUserPostListInRegionRoute, async (c) => {
 	return handleErrors(async (ctx) => {
 		const { userId } = ctx.req.valid('param')
 		const { limit, minLat, maxLat, minLng, maxLng } = ctx.req.valid('query')
+		const limitNum = Number(limit)
 		const minLatNum = Number(minLat)
 		const maxLatNum = Number(maxLat)
 		const minLngNum = Number(minLng)
 		const maxLngNum = Number(maxLng)
 		const res = await svc.post.getByUserIdInRegion(
 			ctx,
+			limitNum,
 			userId,
 			minLatNum,
 			maxLatNum,

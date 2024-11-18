@@ -6,6 +6,23 @@ class PostService {
 	async getAll(c: Context) {
 		return await repo.post.getAll(c)
 	}
+	async getAllInRegion(
+		c: Context,
+		limit: number,
+		minLat: number,
+		maxLat: number,
+		minLng: number,
+		maxLng: number
+	) {
+		return await repo.post.getAllInRegion(
+			c,
+			limit,
+			minLat,
+			maxLat,
+			minLng,
+			maxLng
+		)
+	}
 	async getByPostId(c: Context, postId: string) {
 		return await repo.post.getByPostId(c, postId)
 	}
@@ -14,6 +31,7 @@ class PostService {
 	}
 	async getByUserIdInRegion(
 		c: Context,
+		limit: number,
 		userId: string,
 		minLat: number,
 		maxLat: number,
@@ -22,6 +40,7 @@ class PostService {
 	) {
 		return await repo.post.getByUserIdInRegion(
 			c,
+			limit,
 			userId,
 			minLat,
 			maxLat,

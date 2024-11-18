@@ -17,6 +17,10 @@ export const postSchema = z.object({
 })
 
 export const postListSchema = z.object({
+	posts: z.array(postSchema),
+})
+
+export const postListWithMediaItemSchema = z.object({
 	posts: z.array(
 		postSchema.extend({
 			mediaItem: mediaItemSchema.nullable(),
@@ -25,10 +29,6 @@ export const postListSchema = z.object({
 	limit: zNum(10),
 	offset: zNum(0),
 	totalCount: zNum(100),
-})
-
-export const userPostInRegionListScema = z.object({
-	posts: z.array(postSchema),
 })
 
 export const postDetailSchema = z.object({
@@ -50,7 +50,9 @@ const postInputSchema = z.object({
 })
 
 export type PostSchema = z.infer<typeof postSchema>
-export type PostListSchema = z.infer<typeof postListSchema>
+export type PostListWithMediaitemSchema = z.infer<
+	typeof postListWithMediaItemSchema
+>
 export type PostDetailSchema = z.infer<typeof postDetailSchema>
 export type PostInputSchema = z.infer<typeof postInputSchema>
 
@@ -63,6 +65,32 @@ export const fetchPostListRoute = createRoute({
 		query: z.object({
 			limit: zString('10').default('10'),
 			offset: zString('0').default('0'),
+		}),
+	},
+	responses: {
+		200: {
+			description: '投稿一覧',
+			content: {
+				'application/json': {
+					schema: postListWithMediaItemSchema,
+				},
+			},
+		},
+	},
+})
+
+export const fetchPostListInRegionRoute = createRoute({
+	path: '/posts/region',
+	method: 'get',
+	description: '地図上で選択された範囲の投稿一覧を取得する',
+	operationId: 'fetchPostListInRegion',
+	request: {
+		query: z.object({
+			limit: zString('10').default('10'),
+			minLat: zString('35.658034'),
+			maxLat: zString('35.758034'),
+			minLng: zString('139.701636'),
+			maxLng: zString('139.801636'),
 		}),
 	},
 	responses: {
@@ -96,7 +124,7 @@ export const fetchUserPostListRoute = createRoute({
 			description: 'ユーザーの投稿一覧',
 			content: {
 				'application/json': {
-					schema: postListSchema,
+					schema: postListWithMediaItemSchema,
 				},
 			},
 		},
@@ -125,7 +153,7 @@ export const fetchUserPostListInRegionRoute = createRoute({
 			description: 'ユーザーの投稿一覧',
 			content: {
 				'application/json': {
-					schema: userPostInRegionListScema,
+					schema: postListSchema,
 				},
 			},
 		},

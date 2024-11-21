@@ -17,8 +17,18 @@ app.openapi(fetchUserGroupListRoute, async (c) => {
 		const { limit, offset } = ctx.req.valid('query')
 		const limitNum = Number(limit)
 		const offsetNum = Number(offset)
-		const res = await svc.group.getByUserId(ctx, userId, limitNum, offsetNum)
-		return ctx.json({ groups: res })
+		const { res, totalCount } = await svc.group.getByUserId(
+			ctx,
+			userId,
+			limitNum,
+			offsetNum
+		)
+		return ctx.json({
+			groups: res,
+			limit: limitNum,
+			offset: offsetNum,
+			totalCount,
+		})
 	}, c)
 })
 

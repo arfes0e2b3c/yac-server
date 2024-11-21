@@ -1,5 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi'
-import { zDate, zString } from './common'
+import { zDate, zNum, zString } from './common'
 
 export const groupSchema = z.object({
 	id: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7').max(36),
@@ -23,9 +23,9 @@ const groupListSchema = z.object({ groups: z.array(groupSchema) })
 
 const groupListInfiniteSchema = z.object({
 	groups: z.array(groupSchema),
-	limit: zString('10'),
-	offset: zString('0'),
-	totalCount: zString('100'),
+	limit: zNum(10),
+	offset: zNum(0),
+	totalCount: zNum(100),
 })
 
 export type GroupSchema = z.infer<typeof groupSchema>

@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm'
+import { count, sql } from 'drizzle-orm'
 import { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { GroupInputSchema } from '../../openapi/group'
@@ -8,11 +8,18 @@ import { groupsTable } from '../db/schema/groups'
 class GroupRepository {
 	async getByUserId(c: Context, userId: string, limit: number, offset: number) {
 		return withDbConnection(c, async (db) => {
-			return await db.query.groupsTable.findMany({
+			const groupRes = await db.query.groupsTable.findMany({
 				where: sql`${groupsTable.userId} = ${userId} and ${groupsTable.deletedAt} IS NULL`,
 				limit,
 				offset,
 			})
+			const [groupCount] = await db
+				.select({ count: count() })
+				.from(groupsTable)
+				.where(
+					sql`${groupsTable.userId} = ${userId} and ${groupsTable.deletedAt} IS NULL`
+				)
+			return { res: groupRes, totalCount: groupCount.count }
 		})
 	}
 	async getById(c: Context, groupId: string) {

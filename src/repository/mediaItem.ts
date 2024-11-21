@@ -40,7 +40,7 @@ class MediaItemRepository {
 		})
 	}
 	async getBySearch(c: Context, q: string, limit: number, offset: number) {
-		const where = ilike(mediaItemsTable.title, `%${q}%`)
+		const where = sql`${ilike(mediaItemsTable.title, `%${q}%`)} and ${mediaItemsTable.deletedAt} IS NULL`
 		return withDbConnection(c, async (db) => {
 			const mediaItemRes = await db
 				.select()

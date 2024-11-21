@@ -48,6 +48,25 @@ class PostService {
 			maxLng
 		)
 	}
+	async getBySearch(
+		c: Context,
+		userId: string,
+		q: string,
+		startDate: string,
+		endDate: string,
+		limit: number,
+		offset: number
+	) {
+		return await repo.post.getBySearch(
+			c,
+			userId,
+			q,
+			startDate,
+			endDate,
+			limit,
+			offset
+		)
+	}
 	async getByMediaItemId(
 		c: Context,
 		limit: number,

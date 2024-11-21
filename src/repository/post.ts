@@ -154,6 +154,44 @@ class PostRepository {
 		})
 	}
 
+	async getBySearch(
+		c: Context,
+		userId: string,
+		q: string,
+		startDate: string,
+		endDate: string,
+		limit: number,
+		offset: number
+	) {
+		const today = new Date().toLocaleDateString()
+		return withDbConnection(c, async (db) => {
+			const where = sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and ${postsTable.content} ILIKE ${`%${q}%`}`
+			if (startDate !== today && endDate !== today) {
+				where.append(
+					sql` and ${postsTable.date} >= ${startDate} and ${postsTable.date} <= ${endDate}`
+				)
+			}
+			const postRes = await db.query.postsTable.findMany({
+				columns: {
+					userId: false,
+					mediaItemId: false,
+				},
+				with: {
+					mediaItem: true,
+				},
+				orderBy: [desc(postsTable.createdAt)],
+				where,
+				limit,
+				offset,
+			})
+			const [countRes] = await db
+				.select({ count: count() })
+				.from(postsTable)
+				.where(where)
+			return { res: postRes, totalCount: countRes.count }
+		})
+	}
+
 	async getByMediaItemId(
 		c: Context,
 		limit: number,

@@ -160,6 +160,35 @@ export const fetchUserPostListInRegionRoute = createRoute({
 	},
 })
 
+export const searchUserPostListRoute = createRoute({
+	path: '/users/{userId}/posts/search',
+	method: 'get',
+	description: 'ユーザーの投稿を検索する',
+	operationId: 'searchUserPostList',
+	request: {
+		params: z.object({
+			userId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
+		}),
+		query: z.object({
+			q: zString('キーワード'),
+			startDate: zString('2024-09-23 07:57:07'),
+			endDate: zString('2024-09-23 07:57:07'),
+			limit: zString('10').default('10'),
+			offset: zString('0').default('0'),
+		}),
+	},
+	responses: {
+		200: {
+			description: '検索結果',
+			content: {
+				'application/json': {
+					schema: postListWithMediaItemSchema,
+				},
+			},
+		},
+	},
+})
+
 export const fetchMediaItemPostListRoute = createRoute({
 	path: '/mediaItems/{mediaItemId}/posts',
 	method: 'get',
@@ -179,7 +208,7 @@ export const fetchMediaItemPostListRoute = createRoute({
 			description: 'コンテンツに紐づく投稿一覧',
 			content: {
 				'application/json': {
-					schema: postListSchema,
+					schema: postListWithMediaItemSchema,
 				},
 			},
 		},

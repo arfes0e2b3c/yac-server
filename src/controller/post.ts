@@ -9,6 +9,7 @@ import {
 	fetchPostListRoute,
 	fetchUserPostListInRegionRoute,
 	fetchUserPostListRoute,
+	searchUserPostListRoute,
 	updatePostRoute,
 } from '../../openapi/post'
 import { handleErrors } from '../error'
@@ -92,6 +93,31 @@ app.openapi(fetchUserPostListInRegionRoute, async (c) => {
 		)
 		return ctx.json({
 			posts: res,
+		})
+	}, c)
+})
+
+app.openapi(searchUserPostListRoute, async (c) => {
+	return handleErrors(async (ctx) => {
+		const { userId } = ctx.req.valid('param')
+		const { q, startDate, endDate, limit, offset } = ctx.req.valid('query')
+		const limitNum = Number(limit)
+		const offsetNum = Number(offset)
+		console.log(startDate, endDate)
+		const { res, totalCount } = await svc.post.getBySearch(
+			ctx,
+			userId,
+			q,
+			startDate,
+			endDate,
+			limitNum,
+			offsetNum
+		)
+		return ctx.json({
+			posts: res,
+			limit: limitNum,
+			offset: offsetNum,
+			totalCount,
 		})
 	}, c)
 })

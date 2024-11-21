@@ -11,6 +11,12 @@ export const visibilityEnum = pgEnum('visibility', [
 	'only_followers',
 ])
 
+export const PostsTableVisibility = {
+	PRIVATE: visibilityEnum.enumValues[0],
+	PUBLIC: visibilityEnum.enumValues[1],
+	ONLY_FOLLOWERS: visibilityEnum.enumValues[2],
+}
+
 export const postsTable = pgTable('posts', {
 	id: varchar('id', { length: 36 })
 		.notNull()

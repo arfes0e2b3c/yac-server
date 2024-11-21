@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { Pool } from 'pg'
 import { seedMediaItems } from './mediaItems'
-import { seedPostTags } from './postTags'
+import { seedPostGroups } from './postGroups'
 import { seedPosts } from './posts'
 import { seedTags } from './tags'
 import { seedUsers } from './users'
@@ -21,7 +21,7 @@ const seed = async () => {
 	const mediaItemIds = await seedMediaItems()
 	const tagIds = await seedTags(userIds)
 	const postIds = await seedPosts(userIds, mediaItemIds)
-	await seedPostTags(postIds, tagIds)
+	await seedPostGroups(postIds, tagIds)
 }
 
 seed()

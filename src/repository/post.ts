@@ -1,8 +1,9 @@
-import { count, desc, sql } from 'drizzle-orm'
+import { count, desc, eq, sql } from 'drizzle-orm'
 import { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { PostInputSchema } from '../../openapi/post'
 import { withDbConnection } from '../db/connection'
+import { postGroupsTable } from '../db/schema/postGroups'
 import { PostsTableVisibility, postsTable } from '../db/schema/posts'
 
 class PostRepository {
@@ -218,6 +219,59 @@ class PostRepository {
 				.from(postsTable)
 				.where(where)
 			return { res: postRes, totalCount: countRes.count }
+		})
+	}
+
+	async getByUserGroupId(
+		c: Context,
+		userId: string,
+		groupId: string,
+		limit: number,
+		offset: number
+	) {
+		return withDbConnection(c, async (db) => {
+			const where = sql`${postGroupsTable.groupId} = ${groupId} and ${postsTable.deletedAt} IS NULL`
+			// const postRes = await db
+			// 	.select()
+			// 	.from(postGroupsTable)
+			// 	.innerJoin(
+			// 		postsTable,
+			// 		sql`${postGroupsTable.postId} = ${postsTable.id} and ${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL`
+			// 	)
+			// 	.where(where)
+			// 	.limit(limit)
+			// 	.offset(offset)
+			const postRes = await db.query.postGroupsTable.findMany({
+				columns: {
+					postId: false,
+					groupId: false,
+					createdAt: false,
+					updatedAt: false,
+					deletedAt: false,
+				},
+				with: {
+					post: {
+						columns: {
+							mediaItemId: false,
+						},
+						with: {
+							mediaItem: true,
+						},
+					},
+				},
+				where,
+				limit,
+				offset,
+			})
+			const postList = postRes
+				.map((item) => item.post)
+				.filter((item) => item.deletedAt === null && item.userId === userId)
+			const [countRes] = await db
+				.select({ count: count() })
+				.from(postGroupsTable)
+				.innerJoin(postsTable, eq(postGroupsTable.postId, postsTable.id))
+				.where(where)
+			return { res: postList, totalCount: countRes.count }
 		})
 	}
 

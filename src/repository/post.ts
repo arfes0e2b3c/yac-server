@@ -3,7 +3,7 @@ import { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { PostInputSchema } from '../../openapi/post'
 import { withDbConnection } from '../db/connection'
-import { postsTable } from '../db/schema/posts'
+import { PostsTableVisibility, postsTable } from '../db/schema/posts'
 
 class PostRepository {
 	async getAll(c: Context) {
@@ -17,16 +17,16 @@ class PostRepository {
 				with: {
 					user: true,
 					mediaItem: true,
-					postTags: {
+					postGroups: {
 						columns: {
 							postId: false,
-							tagId: false,
+							groupId: false,
 							createdAt: false,
 							updatedAt: false,
 							deletedAt: false,
 						},
 						with: {
-							tag: true,
+							group: true,
 						},
 					},
 				},
@@ -71,16 +71,16 @@ class PostRepository {
 				with: {
 					user: true,
 					mediaItem: true,
-					postTags: {
+					postGroups: {
 						columns: {
 							postId: false,
-							tagId: false,
+							groupId: false,
 							createdAt: false,
 							updatedAt: false,
 							deletedAt: false,
 						},
 						with: {
-							tag: true,
+							group: true,
 						},
 					},
 				},
@@ -107,16 +107,16 @@ class PostRepository {
 				with: {
 					// user: true,
 					mediaItem: true,
-					// postTags: {
+					// postGroups: {
 					// 	columns: {
 					// 		postId: false,
-					// 		tagId: false,
+					// 		groupId: false,
 					// 		createdAt: false,
 					// 		updatedAt: false,
 					// 		deletedAt: false,
 					// 	},
 					// 	with: {
-					// 		tag: true,
+					// 		group: true,
 					// 	},
 					// },
 				},
@@ -203,6 +203,9 @@ class PostRepository {
 			const postRes = await db.query.postsTable.findMany({
 				columns: {
 					userId: false,
+				},
+				with: {
+					mediaItem: true,
 				},
 				orderBy: [desc(postsTable.createdAt)],
 				where,

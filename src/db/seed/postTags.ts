@@ -1,6 +1,6 @@
 import { fakerJA as faker } from '@faker-js/faker'
 import { SeedDb } from '.'
-import { PostTagsTableSchema, postTagsTable } from '../schema/postTags'
+import { PostTagsTableSchema, postTagsTable } from '../schema/postGroups'
 
 export const fakePostTag: (
 	postIds: string[],

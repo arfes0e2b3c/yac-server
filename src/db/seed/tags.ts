@@ -1,7 +1,7 @@
 import { fakerJA as faker } from '@faker-js/faker'
 import { ulid } from 'ulid'
 import { SeedDb } from '.'
-import { TagsTableSchema, tagsTable } from '../schema/tags'
+import { TagsTableSchema, tagsTable } from '../schema/groups'
 
 export const fakeTag: (userIds: string[]) => TagsTableSchema = (userIds) => ({
 	id: ulid(),

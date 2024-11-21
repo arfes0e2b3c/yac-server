@@ -55,7 +55,7 @@ class PostRepository {
 					mediaItemId: false,
 				},
 				orderBy: [desc(postsTable.createdAt)],
-				where: sql`${postsTable.deletedAt} IS NULL and ${postsTable.locationPoint} <@ box(point(${minLat}, ${minLng}), point(${maxLat}, ${maxLng}))`,
+				where: sql`${postsTable.deletedAt} IS NULL and ${postsTable.locationPoint} <@ box(point(${minLat}, ${minLng}), point(${maxLat}, ${maxLng})) and ${postsTable.visibility} = ${PostsTableVisibility.PUBLIC}`,
 				limit,
 			})
 		})

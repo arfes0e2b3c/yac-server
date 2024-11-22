@@ -8,6 +8,7 @@ import { postApp } from './controller/post'
 import { userApp } from './controller/user'
 import { svc } from './service'
 import { Env } from './types'
+import { postGroupApp } from './controller/postGroup'
 
 const app = new OpenAPIHono().basePath('/api')
 
@@ -24,7 +25,7 @@ app.route('/', userApp)
 app.route('/', postApp)
 app.route('/', groupApp)
 app.route('/', mediaItemApp)
-app.get('/', (c) => c.text('Hello, World!'))
+app.route('/', postGroupApp)
 
 app.doc31('/doc', {
 	openapi: '3.1.0',

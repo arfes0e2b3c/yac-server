@@ -219,7 +219,7 @@ export const fetchUserGroupPostListRoute = createRoute({
 	path: 'users/{userId}/groups/{groupId}/posts',
 	method: 'get',
 	description: 'タグに紐づく投稿一覧を取得する',
-	operationId: 'fetchGroupPostList',
+	operationId: 'fetchUserGroupPostList',
 	request: {
 		query: z.object({
 			limit: zString('10').default('10'),

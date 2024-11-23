@@ -275,11 +275,11 @@ class PostRepository {
 		})
 	}
 
-	async create(c: Context, body: PostInputSchema) {
+	async create(c: Context, body: PostInputSchema, score: number) {
 		return withDbConnection(c, async (db) => {
 			const [res] = await db
 				.insert(postsTable)
-				.values({ updatedAt: sql`NOW()`, ...body })
+				.values({ updatedAt: sql`NOW()`, score, ...body })
 				.returning({ id: postsTable.id })
 			return res
 		})

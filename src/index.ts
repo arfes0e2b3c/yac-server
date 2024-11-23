@@ -5,10 +5,10 @@ import { HTTPException } from 'hono/http-exception'
 import { groupApp } from './controller/group'
 import { mediaItemApp } from './controller/mediaItem'
 import { postApp } from './controller/post'
+import { postGroupApp } from './controller/postGroup'
 import { userApp } from './controller/user'
 import { svc } from './service'
 import { Env } from './types'
-import { postGroupApp } from './controller/postGroup'
 
 const app = new OpenAPIHono().basePath('/api')
 

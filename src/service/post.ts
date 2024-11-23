@@ -1,5 +1,6 @@
 import { Context } from 'hono'
 import { PostInputSchema } from '../../openapi/post'
+import { api } from '../api'
 import { repo } from '../repository'
 
 class PostService {
@@ -86,7 +87,11 @@ class PostService {
 	}
 
 	async create(c: Context, body: PostInputSchema) {
-		return await repo.post.create(c, body)
+		const score = await api.cloudNaturalLanguage.evaluateSentiment(
+			c,
+			body.content
+		)
+		return await repo.post.create(c, body, score)
 	}
 	async updateByPostId(c: Context, postId: string, body: PostInputSchema) {
 		return await repo.post.updateByPostId(c, postId, body)

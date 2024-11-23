@@ -1,5 +1,12 @@
 import { relations, sql } from 'drizzle-orm'
-import { pgEnum, pgTable, point, timestamp, varchar } from 'drizzle-orm/pg-core'
+import {
+	doublePrecision,
+	pgEnum,
+	pgTable,
+	point,
+	timestamp,
+	varchar,
+} from 'drizzle-orm/pg-core'
 import { ulid } from 'ulid'
 import { mediaItemsTable } from './mediaItems'
 import { postGroupsTable } from './postGroups'
@@ -39,6 +46,7 @@ export const postsTable = pgTable('posts', {
 		.default(sql`NULL`),
 	visibility: visibilityEnum().notNull().default('public'),
 	date: timestamp('date'),
+	score: doublePrecision('score').default(0).notNull(),
 	createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
 	updatedAt: timestamp('updated_at')
 		.default(sql`CURRENT_TIMESTAMP`)

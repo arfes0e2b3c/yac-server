@@ -85,6 +85,20 @@
       "when": 1732168020406,
       "tag": "0011_low_dragon_lord",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1732319252930,
+      "tag": "0012_glorious_emma_frost",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1732319745047,
+      "tag": "0013_clever_amazoness",
+      "breakpoints": true
     }
   ]
 }

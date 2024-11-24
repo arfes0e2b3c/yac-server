@@ -34,6 +34,7 @@ export const fakePost: (
 		to: '2024-09-01T00:00:00.000Z',
 	}),
 	deletedAt: null,
+	score: 0,
 })
 
 export const seedPosts = async (userIds: string[], mediaItemIds: string[]) => {

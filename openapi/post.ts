@@ -11,6 +11,7 @@ export const postSchema = z.object({
 	relatedUrl: zString('https://example.com/related').nullable(),
 	visibility: z.enum(['private', 'public', 'only_followers']),
 	date: zDate('2024-09-23 07:57:07').nullable(),
+	score: zNum(0),
 	createdAt: zDate('2024-09-23 07:57:06'),
 	updatedAt: zDate('2024-09-23 07:57:06'),
 	deletedAt: zDate('2024-09-23 07:57:06').nullable(),

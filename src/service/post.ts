@@ -1,5 +1,8 @@
 import { Context } from 'hono'
-import { PostInputSchema } from '../../openapi/post'
+import {
+	InfiniteBaseQueryWithDateSchema,
+	PostInputSchema,
+} from '../../openapi/post'
 import { api } from '../api'
 import { repo } from '../repository'
 
@@ -27,8 +30,12 @@ class PostService {
 	async getByPostId(c: Context, postId: string) {
 		return await repo.post.getByPostId(c, postId)
 	}
-	async getByUserId(c: Context, userId: string, limit: number, offset: number) {
-		return await repo.post.getByUserId(c, userId, limit, offset)
+	async getByUserId(
+		c: Context,
+		userId: string,
+		query: InfiniteBaseQueryWithDateSchema
+	) {
+		return await repo.post.getByUserId(c, userId, query)
 	}
 	async getByUserIdInRegion(
 		c: Context,

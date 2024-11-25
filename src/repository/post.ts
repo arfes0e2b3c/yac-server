@@ -1,7 +1,10 @@
 import { count, desc, eq, sql } from 'drizzle-orm'
 import { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { PostInputSchema } from '../../openapi/post'
+import {
+	InfiniteBaseQueryWithDateSchema,
+	PostInputSchema,
+} from '../../openapi/post'
 import { withDbConnection } from '../db/connection'
 import { postTagsTable } from '../db/schema/postTags'
 import { PostsTableVisibility, postsTable } from '../db/schema/posts'
@@ -97,9 +100,19 @@ class PostRepository {
 		})
 	}
 
-	async getByUserId(c: Context, userId: string, limit: number, offset: number) {
+	async getByUserId(
+		c: Context,
+		userId: string,
+		query: InfiniteBaseQueryWithDateSchema
+	) {
+		const { startDate, endDate, limit, offset } = query
 		return withDbConnection(c, async (db) => {
 			const where = sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL`
+			if (startDate !== '' && endDate !== '') {
+				where.append(
+					sql` and ${postsTable.date} >= ${startDate} and ${postsTable.date} <= ${endDate}`
+				)
+			}
 			const postRes = await db.query.postsTable.findMany({
 				columns: {
 					userId: false,
@@ -122,7 +135,7 @@ class PostRepository {
 					// },
 				},
 				orderBy: [desc(postsTable.createdAt)],
-				where: sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL`,
+				where,
 				limit,
 				offset,
 			})

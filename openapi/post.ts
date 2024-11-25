@@ -38,6 +38,23 @@ export const postDetailSchema = z.object({
 	}),
 })
 
+export const infiniteBaseQuery = z.object({
+	limit: zString('10').default('10'),
+	offset: zString('0').default('0'),
+})
+
+export const dateQuery = z.object({
+	startDate: zString('2024-09-23 07:57:07').nullable().default(''),
+	endDate: zString('2024-09-23 07:57:07').nullable().default(''),
+})
+
+export type InfiniteBaseQuerySchema = {
+	limit: number
+	offset: number
+}
+export type InfiniteBaseQueryWithDateSchema = InfiniteBaseQuerySchema &
+	z.infer<typeof dateQuery>
+
 const postInputSchema = z.object({
 	content: zString('本文'),
 	locationLabel: zString('場所名').nullable(),
@@ -115,10 +132,7 @@ export const fetchUserPostListRoute = createRoute({
 		params: z.object({
 			userId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
 		}),
-		query: z.object({
-			limit: z.string().default('10'),
-			offset: z.string().default('0'),
-		}),
+		query: infiniteBaseQuery.merge(dateQuery),
 	},
 	responses: {
 		200: {

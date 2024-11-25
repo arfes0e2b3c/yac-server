@@ -76,14 +76,14 @@ class PostService {
 	) {
 		return await repo.post.getByMediaItemId(c, limit, offset, mediaItemId)
 	}
-	async getByUserGroupId(
+	async getByUserTagId(
 		c: Context,
 		userId: string,
-		groupId: string,
+		tagId: string,
 		limit: number,
 		offset: number
 	) {
-		return await repo.post.getByUserGroupId(c, userId, groupId, limit, offset)
+		return await repo.post.getByUserTagId(c, userId, tagId, limit, offset)
 	}
 
 	async create(c: Context, body: PostInputSchema) {

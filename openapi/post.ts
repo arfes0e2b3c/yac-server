@@ -216,11 +216,11 @@ export const fetchMediaItemPostListRoute = createRoute({
 	},
 })
 
-export const fetchUserGroupPostListRoute = createRoute({
-	path: 'users/{userId}/groups/{groupId}/posts',
+export const fetchUserTagPostListRoute = createRoute({
+	path: 'users/{userId}/tags/{tagId}/posts',
 	method: 'get',
 	description: 'タグに紐づく投稿一覧を取得する',
-	operationId: 'fetchUserGroupPostList',
+	operationId: 'fetchUserTagPostList',
 	request: {
 		query: z.object({
 			limit: zString('10').default('10'),
@@ -228,7 +228,7 @@ export const fetchUserGroupPostListRoute = createRoute({
 		}),
 		params: z.object({
 			userId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
-			groupId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
+			tagId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
 		}),
 	},
 	responses: {

@@ -1,47 +1,45 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { zDate, zString } from './common'
 
-export const postGroupSchema = z.object({
+export const postTagSchema = z.object({
 	id: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
 	postId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
-	groupId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
+	tagId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
 	createdAt: zDate('2024-09-23 07:57:06'),
 	updatedAt: zDate('2024-09-23 07:57:06'),
 	deletedAt: zDate('2024-09-23 07:57:06').nullable(),
 })
 
-export const postGroupInputSchema = z.object({
+export const postTagInputSchema = z.object({
 	postId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
-	groupId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
+	tagId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
 })
 
-export const postGroupDeleteInputSchema = z.object({
+export const postTagDeleteInputSchema = z.object({
 	postIds: z.array(zString('01J8F3RR15SSSVV2F3AGMJ4ZE7')),
-	groupId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
+	tagId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
 })
 
-export type PostGroupSchema = z.infer<typeof postGroupSchema>
-export type PostGroupInputSchema = z.infer<typeof postGroupInputSchema>
-export type PostGroupDeleteInputSchema = z.infer<
-	typeof postGroupDeleteInputSchema
->
+export type PostTagSchema = z.infer<typeof postTagSchema>
+export type PostTagInputSchema = z.infer<typeof postTagInputSchema>
+export type PostTagDeleteInputSchema = z.infer<typeof postTagDeleteInputSchema>
 
-export const postGroupListSchema = z.object({
-	postGroups: z.array(postGroupSchema),
+export const postTagListSchema = z.object({
+	postTags: z.array(postTagSchema),
 })
 
 export const postIdListSchema = z.object({
 	postIds: z.array(zString('01J8F3RR15SSSVV2F3AGMJ4ZE7')),
 })
 
-export const fetchGroupPostIdListRoute = createRoute({
-	path: '/postGroups/{groupId}',
+export const fetchTagPostIdListRoute = createRoute({
+	path: '/postTags/{tagId}',
 	method: 'get',
 	description: 'グループに紐付いた投稿のID一覧を取得する',
-	operationId: 'fetchGroupPostIdList',
+	operationId: 'fetchTagPostIdList',
 	request: {
 		params: z.object({
-			groupId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
+			tagId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
 		}),
 	},
 	responses: {
@@ -56,17 +54,17 @@ export const fetchGroupPostIdListRoute = createRoute({
 	},
 })
 
-export const createPostGroupRoute = createRoute({
-	path: '/postGroups',
+export const createPostTagRoute = createRoute({
+	path: '/postTags',
 	method: 'post',
 	description: '投稿とグループを紐付ける',
-	operationId: 'createPostGroup',
+	operationId: 'createPostTag',
 	request: {
 		body: {
 			required: true,
 			content: {
 				'application/json': {
-					schema: postGroupInputSchema,
+					schema: postTagInputSchema,
 				},
 			},
 		},
@@ -78,7 +76,7 @@ export const createPostGroupRoute = createRoute({
 				'application/json': {
 					schema: z.object({
 						postId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
-						groupId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
+						tagId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
 					}),
 				},
 			},
@@ -86,17 +84,17 @@ export const createPostGroupRoute = createRoute({
 	},
 })
 
-export const deletePostGroupRoute = createRoute({
-	path: '/postGroups',
+export const deletePostTagRoute = createRoute({
+	path: '/postTags',
 	method: 'put',
 	description: '投稿とグループの紐付けを解除する',
-	operationId: 'deletePostGroup',
+	operationId: 'deletePostTag',
 	request: {
 		body: {
 			required: true,
 			content: {
 				'application/json': {
-					schema: postGroupDeleteInputSchema,
+					schema: postTagDeleteInputSchema,
 				},
 			},
 		},
@@ -108,7 +106,7 @@ export const deletePostGroupRoute = createRoute({
 				'application/json': {
 					schema: z.object({
 						postId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
-						groupId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
+						tagId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
 					}),
 				},
 			},

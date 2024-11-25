@@ -1,7 +1,7 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { zDate, zNum, zString } from './common'
 
-export const groupSchema = z.object({
+export const tagSchema = z.object({
 	id: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7').max(36),
 	name: zString('タイトル').max(255),
 	userId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
@@ -10,33 +10,33 @@ export const groupSchema = z.object({
 	deletedAt: zDate('2024-09-23 07:57:06').nullable(),
 })
 
-const groupDetailSchema = z.object({
-	group: groupSchema,
+const tagDetailSchema = z.object({
+	tag: tagSchema,
 })
 
-const groupInputSchema = z.object({
+const tagInputSchema = z.object({
 	name: zString('タイトル').max(255),
 	userId: zString('自己紹介'),
 })
 
-const groupListSchema = z.object({ groups: z.array(groupSchema) })
+const tagListSchema = z.object({ tags: z.array(tagSchema) })
 
-const groupListInfiniteSchema = z.object({
-	groups: z.array(groupSchema),
+const tagListInfiniteSchema = z.object({
+	tags: z.array(tagSchema),
 	limit: zNum(10),
 	offset: zNum(0),
 	totalCount: zNum(100),
 })
 
-export type GroupSchema = z.infer<typeof groupSchema>
-export type GroupListSchema = z.infer<typeof groupListSchema>
-export type GroupInputSchema = z.infer<typeof groupInputSchema>
+export type TagSchema = z.infer<typeof tagSchema>
+export type TagListSchema = z.infer<typeof tagListSchema>
+export type TagInputSchema = z.infer<typeof tagInputSchema>
 
-export const fetchUserGroupListRoute = createRoute({
-	path: '/users/{userId}/groups',
+export const fetchUserTagListRoute = createRoute({
+	path: '/users/{userId}/tags',
 	method: 'get',
 	description: 'ユーザーのタグ一覧を取得する',
-	operationId: 'fetchUserGroupList',
+	operationId: 'fetchUserTagList',
 	request: {
 		query: z.object({
 			limit: zString('10').default('10'),
@@ -51,21 +51,21 @@ export const fetchUserGroupListRoute = createRoute({
 			description: 'タグ一覧',
 			content: {
 				'application/json': {
-					schema: groupListInfiniteSchema,
+					schema: tagListInfiniteSchema,
 				},
 			},
 		},
 	},
 })
 
-export const fetchGroupDetailRoute = createRoute({
-	path: '/groups/{groupId}',
+export const fetchTagDetailRoute = createRoute({
+	path: '/tags/{tagId}',
 	method: 'get',
 	description: 'タグ詳細を取得する',
-	operationId: 'fetchGroupDetail',
+	operationId: 'fetchTagDetail',
 	request: {
 		params: z.object({
-			groupId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
+			tagId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
 		}),
 	},
 	responses: {
@@ -73,24 +73,24 @@ export const fetchGroupDetailRoute = createRoute({
 			description: 'タグ詳細',
 			content: {
 				'application/json': {
-					schema: groupDetailSchema,
+					schema: tagDetailSchema,
 				},
 			},
 		},
 	},
 })
 
-export const createGroupRoute = createRoute({
-	path: '/groups',
+export const createTagRoute = createRoute({
+	path: '/tags',
 	method: 'post',
 	description: 'タグを新規追加する',
-	operationId: 'createGroup',
+	operationId: 'createTag',
 	request: {
 		body: {
 			required: true,
 			content: {
 				'application/json': {
-					schema: groupInputSchema,
+					schema: tagInputSchema,
 				},
 			},
 		},
@@ -109,22 +109,22 @@ export const createGroupRoute = createRoute({
 	},
 })
 
-export const updateGroupRoute = createRoute({
-	path: '/groups/{groupId}',
+export const updateTagRoute = createRoute({
+	path: '/tags/{tagId}',
 	method: 'patch',
 	description: 'タグ情報を更新する',
-	operationId: 'updateGroup',
+	operationId: 'updateTag',
 	request: {
 		body: {
 			required: true,
 			content: {
 				'application/json': {
-					schema: groupInputSchema,
+					schema: tagInputSchema,
 				},
 			},
 		},
 		params: z.object({
-			groupId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
+			tagId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
 		}),
 	},
 	responses: {
@@ -141,14 +141,14 @@ export const updateGroupRoute = createRoute({
 	},
 })
 
-export const deleteGroupRoute = createRoute({
-	path: '/{groupId}',
+export const deleteTagRoute = createRoute({
+	path: '/{tagId}',
 	method: 'delete',
 	description: 'タグを論理削除する',
-	operationId: 'deleteGroup',
+	operationId: 'deleteTag',
 	request: {
 		params: z.object({
-			groupId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
+			tagId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
 		}),
 	},
 	responses: {

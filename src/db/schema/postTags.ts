@@ -1,19 +1,19 @@
 import { relations, sql } from 'drizzle-orm'
 import { pgTable, primaryKey, timestamp, varchar } from 'drizzle-orm/pg-core'
-import { groupsTable } from './groups'
 import { postsTable } from './posts'
+import { tagsTable } from './tags'
 
-export const postGroupsTable = pgTable(
-	'post_groups',
+export const postTagsTable = pgTable(
+	'post_tags',
 	{
 		postId: varchar('post_id', { length: 36 })
 			.notNull()
 			.references(() => postsTable.id, {
 				onDelete: 'set null',
 			}),
-		groupId: varchar('group_id', { length: 36 })
+		tagId: varchar('tag_id', { length: 36 })
 			.notNull()
-			.references(() => groupsTable.id, {
+			.references(() => tagsTable.id, {
 				onDelete: 'set null',
 			}),
 		createdAt: timestamp('created_at')
@@ -26,19 +26,19 @@ export const postGroupsTable = pgTable(
 		deletedAt: timestamp('deleted_at').default(sql`NULL`),
 	},
 	(t) => ({
-		pk: primaryKey({ columns: [t.postId, t.groupId] }),
+		pk: primaryKey({ columns: [t.postId, t.tagId] }),
 	})
 )
 
-export const postGroupsRelation = relations(postGroupsTable, ({ one }) => ({
+export const postTagsRelation = relations(postTagsTable, ({ one }) => ({
 	post: one(postsTable, {
-		fields: [postGroupsTable.postId],
+		fields: [postTagsTable.postId],
 		references: [postsTable.id],
 	}),
-	group: one(groupsTable, {
-		fields: [postGroupsTable.groupId],
-		references: [groupsTable.id],
+	tag: one(tagsTable, {
+		fields: [postTagsTable.tagId],
+		references: [tagsTable.id],
 	}),
 }))
 
-export type PostGroupsTableSchema = typeof postGroupsTable.$inferSelect
+export type PostTagsTableSchema = typeof postTagsTable.$inferSelect

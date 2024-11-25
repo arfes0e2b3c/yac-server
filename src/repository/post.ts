@@ -3,7 +3,7 @@ import { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { PostInputSchema } from '../../openapi/post'
 import { withDbConnection } from '../db/connection'
-import { postGroupsTable } from '../db/schema/postGroups'
+import { postTagsTable } from '../db/schema/postTags'
 import { PostsTableVisibility, postsTable } from '../db/schema/posts'
 
 class PostRepository {
@@ -18,16 +18,16 @@ class PostRepository {
 				with: {
 					user: true,
 					mediaItem: true,
-					postGroups: {
+					postTags: {
 						columns: {
 							postId: false,
-							groupId: false,
+							tagId: false,
 							createdAt: false,
 							updatedAt: false,
 							deletedAt: false,
 						},
 						with: {
-							group: true,
+							tag: true,
 						},
 					},
 				},
@@ -72,16 +72,16 @@ class PostRepository {
 				with: {
 					user: true,
 					mediaItem: true,
-					postGroups: {
+					postTags: {
 						columns: {
 							postId: false,
-							groupId: false,
+							tagId: false,
 							createdAt: false,
 							updatedAt: false,
 							deletedAt: false,
 						},
 						with: {
-							group: true,
+							tag: true,
 						},
 					},
 				},
@@ -108,16 +108,16 @@ class PostRepository {
 				with: {
 					// user: true,
 					mediaItem: true,
-					// postGroups: {
+					// postTags: {
 					// 	columns: {
 					// 		postId: false,
-					// 		groupId: false,
+					// 		tagId: false,
 					// 		createdAt: false,
 					// 		updatedAt: false,
 					// 		deletedAt: false,
 					// 	},
 					// 	with: {
-					// 		group: true,
+					// 		tag: true,
 					// 	},
 					// },
 				},
@@ -222,29 +222,29 @@ class PostRepository {
 		})
 	}
 
-	async getByUserGroupId(
+	async getByUserTagId(
 		c: Context,
 		userId: string,
-		groupId: string,
+		tagId: string,
 		limit: number,
 		offset: number
 	) {
 		return withDbConnection(c, async (db) => {
-			const where = sql`${postGroupsTable.groupId} = ${groupId} and ${postsTable.deletedAt} IS NULL`
+			const where = sql`${postTagsTable.tagId} = ${tagId} and ${postsTable.deletedAt} IS NULL`
 			// const postRes = await db
 			// 	.select()
-			// 	.from(postGroupsTable)
+			// 	.from(postTagsTable)
 			// 	.innerJoin(
 			// 		postsTable,
-			// 		sql`${postGroupsTable.postId} = ${postsTable.id} and ${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL`
+			// 		sql`${postTagsTable.postId} = ${postsTable.id} and ${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL`
 			// 	)
 			// 	.where(where)
 			// 	.limit(limit)
 			// 	.offset(offset)
-			const postRes = await db.query.postGroupsTable.findMany({
+			const postRes = await db.query.postTagsTable.findMany({
 				columns: {
 					postId: false,
-					groupId: false,
+					tagId: false,
 					createdAt: false,
 					updatedAt: false,
 					deletedAt: false,
@@ -268,8 +268,8 @@ class PostRepository {
 				.filter((item) => item.deletedAt === null && item.userId === userId)
 			const [countRes] = await db
 				.select({ count: count() })
-				.from(postGroupsTable)
-				.innerJoin(postsTable, eq(postGroupsTable.postId, postsTable.id))
+				.from(postTagsTable)
+				.innerJoin(postsTable, eq(postTagsTable.postId, postsTable.id))
 				.where(where)
 			return { res: postList, totalCount: countRes.count }
 		})

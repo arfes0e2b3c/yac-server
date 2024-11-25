@@ -7,9 +7,9 @@ import {
 	fetchPostDetailRoute,
 	fetchPostListInRegionRoute,
 	fetchPostListRoute,
-	fetchUserGroupPostListRoute,
 	fetchUserPostListInRegionRoute,
 	fetchUserPostListRoute,
+	fetchUserTagPostListRoute,
 	searchUserPostListRoute,
 	updatePostRoute,
 } from '../../openapi/post'
@@ -152,16 +152,16 @@ app.openapi(fetchMediaItemPostListRoute, async (c) => {
 	}, c)
 })
 
-app.openapi(fetchUserGroupPostListRoute, async (c) => {
+app.openapi(fetchUserTagPostListRoute, async (c) => {
 	return handleErrors(async (ctx) => {
-		const { userId, groupId } = ctx.req.valid('param')
+		const { userId, tagId } = ctx.req.valid('param')
 		const { limit, offset } = ctx.req.valid('query')
 		const limitNum = Number(limit)
 		const offsetNum = Number(offset)
-		const { res, totalCount } = await svc.post.getByUserGroupId(
+		const { res, totalCount } = await svc.post.getByUserTagId(
 			ctx,
 			userId,
-			groupId,
+			tagId,
 			limitNum,
 			offsetNum
 		)

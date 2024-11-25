@@ -1,8 +1,8 @@
 import { relations, sql } from 'drizzle-orm'
 import { pgTable, timestamp, varchar } from 'drizzle-orm/pg-core'
 import { ulid } from 'ulid'
-import { groupsTable } from './groups'
 import { postsTable } from './posts'
+import { tagsTable } from './tags'
 
 export const usersTable = pgTable('users', {
 	id: varchar('id', { length: 36 })
@@ -22,7 +22,7 @@ export const usersTable = pgTable('users', {
 })
 
 export const usersRelation = relations(usersTable, ({ many }) => ({
-	tagsTable: many(groupsTable),
+	tagsTable: many(tagsTable),
 	postsTable: many(postsTable),
 }))
 

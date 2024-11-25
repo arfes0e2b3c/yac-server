@@ -1,10 +1,10 @@
 import { relations, sql } from 'drizzle-orm'
 import { pgTable, timestamp, varchar } from 'drizzle-orm/pg-core'
 import { ulid } from 'ulid'
-import { postGroupsTable } from './postGroups'
+import { postTagsTable } from './postTags'
 import { usersTable } from './users'
 
-export const groupsTable = pgTable('groups', {
+export const tagsTable = pgTable('tags', {
 	id: varchar('id', { length: 36 })
 		.notNull()
 		.primaryKey()
@@ -23,12 +23,12 @@ export const groupsTable = pgTable('groups', {
 	deletedAt: timestamp('deleted_at').default(sql`NULL`),
 })
 
-export const groupsRelation = relations(groupsTable, ({ one, many }) => ({
+export const tagsRelation = relations(tagsTable, ({ one, many }) => ({
 	user: one(usersTable, {
-		fields: [groupsTable.userId],
+		fields: [tagsTable.userId],
 		references: [usersTable.id],
 	}),
-	postGroups: many(postGroupsTable),
+	postTags: many(postTagsTable),
 }))
 
-export type GroupsTableSchema = typeof groupsTable.$inferSelect
+export type TagsTableSchema = typeof tagsTable.$inferSelect

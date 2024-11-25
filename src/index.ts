@@ -2,10 +2,10 @@ import { swaggerUI } from '@hono/swagger-ui'
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { groupApp } from './controller/group'
 import { mediaItemApp } from './controller/mediaItem'
 import { postApp } from './controller/post'
-import { postGroupApp } from './controller/postGroup'
+import { postTagApp } from './controller/postTag'
+import { tagApp } from './controller/tag'
 import { userApp } from './controller/user'
 import { svc } from './service'
 import { Env } from './types'
@@ -23,9 +23,9 @@ app.onError((err, c) => {
 
 app.route('/', userApp)
 app.route('/', postApp)
-app.route('/', groupApp)
+app.route('/', tagApp)
 app.route('/', mediaItemApp)
-app.route('/', postGroupApp)
+app.route('/', postTagApp)
 
 app.doc31('/doc', {
 	openapi: '3.1.0',

@@ -1,11 +1,10 @@
 import { createRoute, z } from '@hono/zod-openapi'
-import { zDate, zString } from './common'
-import { userSchema } from './user'
+import { zDate, zNum, zString } from './common'
 
 export const tagSchema = z.object({
 	id: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7').max(36),
 	name: zString('タイトル').max(255),
-	user: userSchema,
+	userId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
 	createdAt: zDate('2024-09-23 07:57:06'),
 	updatedAt: zDate('2024-09-23 07:57:06'),
 	deletedAt: zDate('2024-09-23 07:57:06').nullable(),
@@ -22,21 +21,37 @@ const tagInputSchema = z.object({
 
 const tagListSchema = z.object({ tags: z.array(tagSchema) })
 
+const tagListInfiniteSchema = z.object({
+	tags: z.array(tagSchema),
+	limit: zNum(10),
+	offset: zNum(0),
+	totalCount: zNum(100),
+})
+
 export type TagSchema = z.infer<typeof tagSchema>
 export type TagListSchema = z.infer<typeof tagListSchema>
 export type TagInputSchema = z.infer<typeof tagInputSchema>
 
-export const fetchTagListRoute = createRoute({
-	path: '/tags',
+export const fetchUserTagListRoute = createRoute({
+	path: '/users/{userId}/tags',
 	method: 'get',
-	description: 'タグ一覧を取得する',
-	operationId: 'fetchTagList',
+	description: 'ユーザーのタグ一覧を取得する',
+	operationId: 'fetchUserTagList',
+	request: {
+		query: z.object({
+			limit: zString('10').default('10'),
+			offset: zString('0').default('0'),
+		}),
+		params: z.object({
+			userId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
+		}),
+	},
 	responses: {
 		200: {
 			description: 'タグ一覧',
 			content: {
 				'application/json': {
-					schema: tagListSchema,
+					schema: tagListInfiniteSchema,
 				},
 			},
 		},

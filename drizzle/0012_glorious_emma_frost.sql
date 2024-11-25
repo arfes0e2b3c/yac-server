@@ -1,0 +1,1 @@
+ALTER TABLE "posts" ADD COLUMN "score" integer DEFAULT 0 NOT NULL;

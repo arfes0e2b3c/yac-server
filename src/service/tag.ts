@@ -3,8 +3,8 @@ import { TagInputSchema } from '../../openapi/tag'
 import { repo } from '../repository'
 
 class TagService {
-	async getAll(c: Context) {
-		return await repo.tag.getAll(c)
+	async getByUserId(c: Context, userId: string, limit: number, offset: number) {
+		return await repo.tag.getByUserId(c, userId, limit, offset)
 	}
 	async getById(c: Context, tagId: string) {
 		return await repo.tag.getById(c, tagId)

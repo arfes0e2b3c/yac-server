@@ -3,7 +3,7 @@ import {
 	createTagRoute,
 	deleteTagRoute,
 	fetchTagDetailRoute,
-	fetchTagListRoute,
+	fetchUserTagListRoute,
 	updateTagRoute,
 } from '../../openapi/tag'
 import { handleErrors } from '../error'
@@ -11,10 +11,24 @@ import { svc } from '../service'
 
 const app = new OpenAPIHono()
 
-app.openapi(fetchTagListRoute, async (c) => {
+app.openapi(fetchUserTagListRoute, async (c) => {
 	return handleErrors(async (ctx) => {
-		const res = await svc.tag.getAll(ctx)
-		return ctx.json({ tags: res })
+		const { userId } = ctx.req.valid('param')
+		const { limit, offset } = ctx.req.valid('query')
+		const limitNum = Number(limit)
+		const offsetNum = Number(offset)
+		const { res, totalCount } = await svc.tag.getByUserId(
+			ctx,
+			userId,
+			limitNum,
+			offsetNum
+		)
+		return ctx.json({
+			tags: res,
+			limit: limitNum,
+			offset: offsetNum,
+			totalCount,
+		})
 	}, c)
 })
 

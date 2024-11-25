@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm'
+import { count, sql } from 'drizzle-orm'
 import { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { TagInputSchema } from '../../openapi/tag'
@@ -6,14 +6,20 @@ import { withDbConnection } from '../db/connection'
 import { tagsTable } from '../db/schema/tags'
 
 class TagRepository {
-	async getAll(c: Context) {
+	async getByUserId(c: Context, userId: string, limit: number, offset: number) {
 		return withDbConnection(c, async (db) => {
-			return await db.query.tagsTable.findMany({
-				with: {
-					user: true,
-				},
-				where: sql`${tagsTable.deletedAt} IS NULL`,
+			const tagRes = await db.query.tagsTable.findMany({
+				where: sql`${tagsTable.userId} = ${userId} and ${tagsTable.deletedAt} IS NULL`,
+				limit,
+				offset,
 			})
+			const [tagCount] = await db
+				.select({ count: count() })
+				.from(tagsTable)
+				.where(
+					sql`${tagsTable.userId} = ${userId} and ${tagsTable.deletedAt} IS NULL`
+				)
+			return { res: tagRes, totalCount: tagCount.count }
 		})
 	}
 	async getById(c: Context, tagId: string) {

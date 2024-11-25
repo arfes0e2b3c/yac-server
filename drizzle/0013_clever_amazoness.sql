@@ -1,0 +1,1 @@
+ALTER TABLE "posts" ALTER COLUMN "score" SET DATA TYPE double precision;

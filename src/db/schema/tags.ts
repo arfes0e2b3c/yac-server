@@ -12,7 +12,7 @@ export const tagsTable = pgTable('tags', {
 	name: varchar('name', { length: 255 }).notNull().unique(),
 	userId: varchar('user_id', { length: 36 })
 		.references(() => usersTable.id, {
-			onDelete: 'cascade',
+			onDelete: 'set null',
 		})
 		.notNull(),
 	createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),

@@ -3,10 +3,14 @@ import { OpenAPIHono } from '@hono/zod-openapi'
 import {
 	createPostRoute,
 	deletePostRoute,
+	fetchMediaItemPostListRoute,
 	fetchPostDetailRoute,
+	fetchPostListInRegionRoute,
 	fetchPostListRoute,
 	fetchUserPostListInRegionRoute,
 	fetchUserPostListRoute,
+	fetchUserTagPostListRoute,
+	searchUserPostListRoute,
 	updatePostRoute,
 } from '../../openapi/post'
 import { handleErrors } from '../error'
@@ -29,18 +33,38 @@ app.openapi(fetchPostListRoute, async (c) => {
 	}, c)
 })
 
+app.openapi(fetchPostListInRegionRoute, async (c) => {
+	return handleErrors(async (ctx) => {
+		const { limit, minLat, maxLat, minLng, maxLng } = ctx.req.valid('query')
+		const limitNum = Number(limit)
+		const minLatNum = Number(minLat)
+		const maxLatNum = Number(maxLat)
+		const minLngNum = Number(minLng)
+		const maxLngNum = Number(maxLng)
+		const res = await svc.post.getAllInRegion(
+			ctx,
+			limitNum,
+			minLatNum,
+			maxLatNum,
+			minLngNum,
+			maxLngNum
+		)
+		return ctx.json({ posts: res })
+	}, c)
+})
+
 app.openapi(fetchUserPostListRoute, async (c) => {
 	return handleErrors(async (ctx) => {
 		const { userId } = ctx.req.valid('param')
-		const { limit, offset } = ctx.req.valid('query')
+		const { limit, offset, startDate, endDate } = ctx.req.valid('query')
 		const limitNum = Number(limit)
 		const offsetNum = Number(offset)
-		const { res, totalCount } = await svc.post.getByUserId(
-			ctx,
-			userId,
-			limitNum,
-			offsetNum
-		)
+		const { res, totalCount } = await svc.post.getByUserId(ctx, userId, {
+			limit: limitNum,
+			offset: offsetNum,
+			startDate,
+			endDate,
+		})
 		return ctx.json({
 			posts: res,
 			limit: limitNum,
@@ -54,12 +78,14 @@ app.openapi(fetchUserPostListInRegionRoute, async (c) => {
 	return handleErrors(async (ctx) => {
 		const { userId } = ctx.req.valid('param')
 		const { limit, minLat, maxLat, minLng, maxLng } = ctx.req.valid('query')
+		const limitNum = Number(limit)
 		const minLatNum = Number(minLat)
 		const maxLatNum = Number(maxLat)
 		const minLngNum = Number(minLng)
 		const maxLngNum = Number(maxLng)
 		const res = await svc.post.getByUserIdInRegion(
 			ctx,
+			limitNum,
 			userId,
 			minLatNum,
 			maxLatNum,
@@ -72,11 +98,79 @@ app.openapi(fetchUserPostListInRegionRoute, async (c) => {
 	}, c)
 })
 
+app.openapi(searchUserPostListRoute, async (c) => {
+	return handleErrors(async (ctx) => {
+		const { userId } = ctx.req.valid('param')
+		const { q, startDate, endDate, limit, offset } = ctx.req.valid('query')
+		const limitNum = Number(limit)
+		const offsetNum = Number(offset)
+		console.log(startDate, endDate)
+		const { res, totalCount } = await svc.post.getBySearch(
+			ctx,
+			userId,
+			q,
+			startDate,
+			endDate,
+			limitNum,
+			offsetNum
+		)
+		return ctx.json({
+			posts: res,
+			limit: limitNum,
+			offset: offsetNum,
+			totalCount,
+		})
+	}, c)
+})
+
 app.openapi(fetchPostDetailRoute, async (c) => {
 	return handleErrors(async (ctx) => {
 		const { postId } = ctx.req.valid('param')
 		const res = await svc.post.getByPostId(ctx, postId)
 		return ctx.json({ post: res })
+	}, c)
+})
+
+app.openapi(fetchMediaItemPostListRoute, async (c) => {
+	return handleErrors(async (ctx) => {
+		const { mediaItemId } = ctx.req.valid('param')
+		const { limit, offset } = ctx.req.valid('query')
+		const limitNum = Number(limit)
+		const offsetNum = Number(offset)
+		const { res, totalCount } = await svc.post.getByMediaItemId(
+			ctx,
+			limitNum,
+			offsetNum,
+			mediaItemId
+		)
+		return ctx.json({
+			posts: res,
+			limit: limitNum,
+			offset: offsetNum,
+			totalCount,
+		})
+	}, c)
+})
+
+app.openapi(fetchUserTagPostListRoute, async (c) => {
+	return handleErrors(async (ctx) => {
+		const { userId, tagId } = ctx.req.valid('param')
+		const { limit, offset } = ctx.req.valid('query')
+		const limitNum = Number(limit)
+		const offsetNum = Number(offset)
+		const { res, totalCount } = await svc.post.getByUserTagId(
+			ctx,
+			userId,
+			tagId,
+			limitNum,
+			offsetNum
+		)
+		return ctx.json({
+			posts: res,
+			limit: limitNum,
+			offset: offsetNum,
+			totalCount,
+		})
 	}, c)
 })
 

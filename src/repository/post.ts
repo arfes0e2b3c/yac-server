@@ -1,10 +1,13 @@
-import { env } from 'bun'
-import { count, desc, sql } from 'drizzle-orm'
+import { count, desc, eq, sql } from 'drizzle-orm'
 import { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { PostInputSchema, PostListSchema, PostSchema } from '../../openapi/post'
+import {
+	InfiniteBaseQueryWithDateSchema,
+	PostInputSchema,
+} from '../../openapi/post'
 import { withDbConnection } from '../db/connection'
-import { postsTable } from '../db/schema/posts'
+import { postTagsTable } from '../db/schema/postTags'
+import { PostsTableVisibility, postsTable } from '../db/schema/posts'
 
 class PostRepository {
 	async getAll(c: Context) {
@@ -39,6 +42,26 @@ class PostRepository {
 				.where(where)
 
 			return { res: postRes, totalCount: countRes[0].count }
+		})
+	}
+
+	async getAllInRegion(
+		c: Context,
+		limit: number,
+		minLat: number,
+		maxLat: number,
+		minLng: number,
+		maxLng: number
+	) {
+		return withDbConnection(c, async (db) => {
+			return await db.query.postsTable.findMany({
+				columns: {
+					mediaItemId: false,
+				},
+				orderBy: [desc(postsTable.createdAt)],
+				where: sql`${postsTable.deletedAt} IS NULL and ${postsTable.locationPoint} <@ box(point(${minLat}, ${minLng}), point(${maxLat}, ${maxLng})) and ${postsTable.visibility} = ${PostsTableVisibility.PUBLIC}`,
+				limit,
+			})
 		})
 	}
 
@@ -77,45 +100,56 @@ class PostRepository {
 		})
 	}
 
-	async getByUserId(c: Context, userId: string, limit: number, offset: number) {
+	async getByUserId(
+		c: Context,
+		userId: string,
+		query: InfiniteBaseQueryWithDateSchema
+	) {
+		const { startDate, endDate, limit, offset } = query
 		return withDbConnection(c, async (db) => {
 			const where = sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL`
+			if (startDate !== '' && endDate !== '') {
+				where.append(
+					sql` and ${postsTable.date} >= ${startDate} and ${postsTable.date} <= ${endDate}`
+				)
+			}
 			const postRes = await db.query.postsTable.findMany({
 				columns: {
 					userId: false,
 					mediaItemId: false,
 				},
 				with: {
-					user: true,
+					// user: true,
 					mediaItem: true,
-					postTags: {
-						columns: {
-							postId: false,
-							tagId: false,
-							createdAt: false,
-							updatedAt: false,
-							deletedAt: false,
-						},
-						with: {
-							tag: true,
-						},
-					},
+					// postTags: {
+					// 	columns: {
+					// 		postId: false,
+					// 		tagId: false,
+					// 		createdAt: false,
+					// 		updatedAt: false,
+					// 		deletedAt: false,
+					// 	},
+					// 	with: {
+					// 		tag: true,
+					// 	},
+					// },
 				},
 				orderBy: [desc(postsTable.createdAt)],
-				where: sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL`,
+				where,
 				limit,
 				offset,
 			})
-			const countRes = await db
+			const [countRes] = await db
 				.select({ count: count() })
 				.from(postsTable)
 				.where(where)
-			return { res: postRes, totalCount: countRes[0].count }
+			return { res: postRes, totalCount: countRes.count }
 		})
 	}
 
 	async getByUserIdInRegion(
 		c: Context,
+		limit: number,
 		userId: string,
 		minLat: number,
 		maxLat: number,
@@ -129,15 +163,135 @@ class PostRepository {
 				},
 				orderBy: [desc(postsTable.createdAt)],
 				where: sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and ${postsTable.locationPoint} <@ box(point(${minLat}, ${minLng}), point(${maxLat}, ${maxLng}))`,
+				limit,
 			})
 		})
 	}
 
-	async create(c: Context, body: PostInputSchema) {
+	async getBySearch(
+		c: Context,
+		userId: string,
+		q: string,
+		startDate: string,
+		endDate: string,
+		limit: number,
+		offset: number
+	) {
+		return withDbConnection(c, async (db) => {
+			const where = sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and ${postsTable.content} ILIKE ${`%${q}%`}`
+			if (startDate && endDate) {
+				where.append(
+					sql` and ${postsTable.date} >= ${startDate} and ${postsTable.date} <= ${endDate}`
+				)
+			}
+			const postRes = await db.query.postsTable.findMany({
+				columns: {
+					userId: false,
+					mediaItemId: false,
+				},
+				with: {
+					mediaItem: true,
+				},
+				orderBy: [desc(postsTable.createdAt)],
+				where,
+				limit,
+				offset,
+			})
+			const [countRes] = await db
+				.select({ count: count() })
+				.from(postsTable)
+				.where(where)
+			return { res: postRes, totalCount: countRes.count }
+		})
+	}
+
+	async getByMediaItemId(
+		c: Context,
+		limit: number,
+		offset: number,
+		mediaItemId: string
+	) {
+		return withDbConnection(c, async (db) => {
+			const where = sql`${postsTable.mediaItemId} = ${mediaItemId} and ${postsTable.deletedAt} IS NULL`
+			const postRes = await db.query.postsTable.findMany({
+				columns: {
+					userId: false,
+				},
+				with: {
+					mediaItem: true,
+				},
+				orderBy: [desc(postsTable.createdAt)],
+				where,
+				limit,
+				offset,
+			})
+			console.log(postRes)
+			const [countRes] = await db
+				.select({ count: count() })
+				.from(postsTable)
+				.where(where)
+			return { res: postRes, totalCount: countRes.count }
+		})
+	}
+
+	async getByUserTagId(
+		c: Context,
+		userId: string,
+		tagId: string,
+		limit: number,
+		offset: number
+	) {
+		return withDbConnection(c, async (db) => {
+			const where = sql`${postTagsTable.tagId} = ${tagId} and ${postsTable.deletedAt} IS NULL`
+			// const postRes = await db
+			// 	.select()
+			// 	.from(postTagsTable)
+			// 	.innerJoin(
+			// 		postsTable,
+			// 		sql`${postTagsTable.postId} = ${postsTable.id} and ${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL`
+			// 	)
+			// 	.where(where)
+			// 	.limit(limit)
+			// 	.offset(offset)
+			const postRes = await db.query.postTagsTable.findMany({
+				columns: {
+					postId: false,
+					tagId: false,
+					createdAt: false,
+					updatedAt: false,
+					deletedAt: false,
+				},
+				with: {
+					post: {
+						columns: {
+							mediaItemId: false,
+						},
+						with: {
+							mediaItem: true,
+						},
+					},
+				},
+				where,
+				limit,
+				offset,
+			})
+			const postList = postRes
+				.map((item) => item.post)
+				.filter((item) => item.deletedAt === null && item.userId === userId)
+			const [countRes] = await db
+				.select({ count: count() })
+				.from(postTagsTable)
+				.innerJoin(postsTable, eq(postTagsTable.postId, postsTable.id))
+				.where(where)
+			return { res: postList, totalCount: countRes.count }
+		})
+	}
+
+	async create(c: Context, body: PostInputSchema, score: number) {
 		return withDbConnection(c, async (db) => {
 			const [res] = await db
 				.insert(postsTable)
-				.values({ updatedAt: sql`NOW()`, ...body })
+				.values({ updatedAt: sql`NOW()`, score, ...body })
 				.returning({ id: postsTable.id })
 			return res
 		})

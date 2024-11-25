@@ -1,6 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { zDate, zNum, zString } from './common'
-import { postSchema } from './post'
 
 export const mediaItemSchema = z.object({
 	id: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7').max(36),
@@ -21,7 +20,12 @@ const mediaItemInputSchema = z.object({
 	imageUrl: zString('http://example.com'),
 })
 
-const mediaItemListSchema = z.object({ mediaItems: z.array(mediaItemSchema) })
+const mediaItemListSchema = z.object({
+	mediaItems: z.array(mediaItemSchema),
+	limit: zNum(10),
+	offset: zNum(0),
+	totalCount: zNum(100),
+})
 
 export type MediaItemSchema = z.infer<typeof mediaItemSchema>
 export type MediaItemListSchema = z.infer<typeof mediaItemListSchema>
@@ -32,6 +36,12 @@ export const fetchMediaItemListRoute = createRoute({
 	method: 'get',
 	description: 'コンテンツ一覧を取得する',
 	operationId: 'fetchMediaItemList',
+	request: {
+		query: z.object({
+			limit: zString('10').default('10'),
+			offset: zString('0').default('0'),
+		}),
+	},
 	responses: {
 		200: {
 			description: 'コンテンツ一覧',
@@ -52,6 +62,8 @@ export const searchMediaItemListRoute = createRoute({
 	request: {
 		query: z.object({
 			q: zString('キーワード'),
+			limit: zString('10').default('10'),
+			offset: zString('0').default('0'),
 		}),
 	},
 	responses: {

@@ -177,10 +177,9 @@ class PostRepository {
 		limit: number,
 		offset: number
 	) {
-		const today = new Date().toLocaleDateString()
 		return withDbConnection(c, async (db) => {
 			const where = sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and ${postsTable.content} ILIKE ${`%${q}%`}`
-			if (startDate !== today && endDate !== today) {
+			if (startDate && endDate) {
 				where.append(
 					sql` and ${postsTable.date} >= ${startDate} and ${postsTable.date} <= ${endDate}`
 				)

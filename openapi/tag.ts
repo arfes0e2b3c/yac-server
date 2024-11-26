@@ -142,18 +142,32 @@ export const updateTagRoute = createRoute({
 })
 
 export const deleteTagRoute = createRoute({
-	path: '/{tagId}',
-	method: 'delete',
+	path: '/tags',
+	method: 'patch',
 	description: 'タグを論理削除する',
 	operationId: 'deleteTag',
 	request: {
-		params: z.object({
-			tagId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
-		}),
+		body: {
+			required: true,
+			content: {
+				'application/json': {
+					schema: z.object({
+						tagIds: z.array(zString('01J8F3CJR0NJM89W64KYWSEJVA')),
+					}),
+				},
+			},
+		},
 	},
 	responses: {
 		200: {
 			description: 'OK',
+			content: {
+				'application/json': {
+					schema: z.object({
+						tagIds: z.array(zString('01J8F3CJR0NJM89W64KYWSEJVA')),
+					}),
+				},
+			},
 		},
 		500: {
 			description: 'Internal Server Err',

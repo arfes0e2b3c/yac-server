@@ -35,6 +35,7 @@ export const postListWithMediaItemSchema = z.object({
 export const postDetailSchema = z.object({
 	post: postSchema.extend({
 		mediaItem: mediaItemSchema.nullable(),
+		userId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
 	}),
 })
 

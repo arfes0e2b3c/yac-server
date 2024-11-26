@@ -27,7 +27,6 @@ class PostTagRepository {
 		})
 	}
 	async delete(c: Context, body: PostTagDeleteInputSchema) {
-		console.log('postTagRepo.delete', body.tagId, body.postIds)
 		return withDbConnection(c, async (db) => {
 			const [res] = await db
 				.delete(postTagsTable)

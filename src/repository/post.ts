@@ -69,7 +69,6 @@ class PostRepository {
 		return withDbConnection(c, async (db) => {
 			const res = await db.query.postsTable.findFirst({
 				columns: {
-					userId: false,
 					mediaItemId: false,
 				},
 				with: {

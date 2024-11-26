@@ -58,7 +58,7 @@ class PostRepository {
 				columns: {
 					mediaItemId: false,
 				},
-				orderBy: [desc(postsTable.createdAt)],
+				orderBy: [desc(postsTable.date)],
 				where: sql`${postsTable.deletedAt} IS NULL and ${postsTable.locationPoint} <@ box(point(${minLat}, ${minLng}), point(${maxLat}, ${maxLng})) and ${postsTable.visibility} = ${PostsTableVisibility.PUBLIC}`,
 				limit,
 			})
@@ -133,7 +133,7 @@ class PostRepository {
 					// 	},
 					// },
 				},
-				orderBy: [desc(postsTable.createdAt)],
+				orderBy: [desc(postsTable.date)],
 				where,
 				limit,
 				offset,
@@ -160,7 +160,7 @@ class PostRepository {
 				columns: {
 					mediaItemId: false,
 				},
-				orderBy: [desc(postsTable.createdAt)],
+				orderBy: [desc(postsTable.date)],
 				where: sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and ${postsTable.locationPoint} <@ box(point(${minLat}, ${minLng}), point(${maxLat}, ${maxLng}))`,
 				limit,
 			})
@@ -191,7 +191,7 @@ class PostRepository {
 				with: {
 					mediaItem: true,
 				},
-				orderBy: [desc(postsTable.createdAt)],
+				orderBy: [desc(postsTable.date)],
 				where,
 				limit,
 				offset,
@@ -219,7 +219,7 @@ class PostRepository {
 				with: {
 					mediaItem: true,
 				},
-				orderBy: [desc(postsTable.createdAt)],
+				orderBy: [desc(postsTable.date)],
 				where,
 				limit,
 				offset,

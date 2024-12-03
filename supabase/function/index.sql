@@ -27,10 +27,10 @@ BEGIN
     BEGIN
       INSERT INTO public.posts (id, content, user_id, visibility, created_at, updated_at, date, score)
       VALUES 
-        (POST_ID_1, E'reneへようこそ！\n右下のボタンから今のきもちを保存してみよう！', NEW.id, 'public', NOW(),NOW(), NOW(), 0.3), 
-        (POST_ID_2, E'画像や場所、作品と紐付けて後から思い出しやすくするのもおすすめ！\nでも場所や作品と紐付けると他の人も見れる場合があるから公開範囲の設定には気をつけて！', NEW.id, 'public', NOW(),NOW(), NOW(), -0.4), 
-        (POST_ID_3, E'【サンプル】\n冬に暖房つけずに外からの日差しだけで温まるの好き', NEW.id, 'public', NOW(),NOW(), NOW(), 0.5), 
-        (POST_ID_4, E'【サンプル】\n大学生ってみんな休日に何してるんだろう...?外出るだけでお金かかるのにそんなに外出したりできるの不思議じゃない？', NEW.id, 'public', NOW(), NOW(), NOW(), -0.2);
+        (POST_ID_1, E'reneへようこそ！\n右下のボタンから今のきもちを保存してみよう！', NEW.id, 'public', NOW(),NOW(), CURRENT_DATE, 0.3), 
+        (POST_ID_2, E'画像や場所、作品と紐付けて後から思い出しやすくするのもおすすめ！\nでも場所や作品と紐付けると他の人も見れる場合があるから公開範囲の設定には気をつけて！', NEW.id, 'public', NOW(),NOW(), CURRENT_DATE, -0.4), 
+        (POST_ID_3, E'【サンプル】\n冬に暖房つけずに外からの日差しだけで温まるの好き', NEW.id, 'public', NOW(),NOW(), CURRENT_DATE, 0.5), 
+        (POST_ID_4, E'【サンプル】\n大学生ってみんな休日に何してるんだろう...?外出るだけでお金かかるのにそんなに外出したりできるの不思議じゃない？', NEW.id, 'public', NOW(), NOW(), CURRENT_DATE, -0.2);
     EXCEPTION WHEN OTHERS THEN
       RAISE WARNING 'Failed to insert public.posts for user_id: %, Error: %', NEW.id, SQLERRM;
     END;

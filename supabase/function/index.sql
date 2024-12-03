@@ -52,7 +52,7 @@ BEGIN
         (POST_ID_1, TAG_ID_1, NOW(), NOW()),
         (POST_ID_2, TAG_ID_1, NOW(), NOW()),
         (POST_ID_3, TAG_ID_2, NOW(), NOW()),
-        (POST_ID_4, TAG_ID_2, NOW(), NOW()),
+        (POST_ID_4, TAG_ID_2, NOW(), NOW());
       EXCEPTION WHEN OTHERS THEN
         RAISE WARNING 'Failed to insert public.post_tags for user_id: %, Error: %', NEW.id, SQLERRM;
     END;

@@ -63,8 +63,7 @@ class TagRepository {
 	async deleteByTagIds(c: Context, tagIds: string[]) {
 		return withDbConnection(c, async (db) => {
 			const res = await db
-				.update(tagsTable)
-				.set({ deletedAt: sql`NOW()`, updatedAt: sql`NOW()` })
+				.delete(tagsTable)
 				.where(sql`${inArray(tagsTable.id, tagIds)} `)
 				.returning({ id: tagsTable.id })
 			return res

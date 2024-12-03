@@ -1,6 +1,7 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { zDate, zNum, zString } from './common'
 import { mediaItemSchema } from './mediaItem'
+import { tagSchema } from './tag'
 
 export const postSchema = z.object({
 	id: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
@@ -36,6 +37,11 @@ export const postDetailSchema = z.object({
 	post: postSchema.extend({
 		mediaItem: mediaItemSchema.nullable(),
 		userId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
+		postTags: z.array(
+			z.object({
+				tag: tagSchema,
+			})
+		),
 	}),
 })
 

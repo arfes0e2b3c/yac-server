@@ -94,10 +94,7 @@ class PostService {
 	}
 
 	async create(c: Context, body: PostInputSchema) {
-		const score = await api.cloudNaturalLanguage.evaluateSentiment(
-			c,
-			body.content
-		)
+		const score = await api.openAi.evaluateSentiment(c, body.content)
 		return await repo.post.create(c, body, score)
 	}
 	async updateByPostId(c: Context, postId: string, body: PostInputSchema) {

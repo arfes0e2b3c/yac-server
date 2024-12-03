@@ -14,7 +14,10 @@ class MediaItemRepository {
 				where,
 				limit,
 				offset,
-				orderBy: [desc(mediaItemsTable.relationCount)],
+				orderBy: [
+					desc(mediaItemsTable.relationCount),
+					desc(mediaItemsTable.createdAt),
+				],
 			})
 			const [countRes] = await db
 				.select({ count: count() })

@@ -59,9 +59,9 @@ app.openapi(updateTagRoute, async (c) => {
 
 app.openapi(deleteTagRoute, async (c) => {
 	return handleErrors(async (ctx) => {
-		const { tagId } = ctx.req.valid('param')
-		const res = await svc.tag.deleteByTagId(ctx, tagId)
-		return ctx.json(res)
+		const { tagIds } = ctx.req.valid('json')
+		const res = await svc.tag.deleteByTagIds(ctx, tagIds)
+		return ctx.json(res.map((tag) => tag.id))
 	}, c)
 })
 

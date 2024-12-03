@@ -1,4 +1,4 @@
-import { count, sql } from 'drizzle-orm'
+import { count, inArray, sql } from 'drizzle-orm'
 import { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { TagInputSchema } from '../../openapi/tag'
@@ -60,12 +60,11 @@ class TagRepository {
 			return res
 		})
 	}
-	async deleteByTagId(c: Context, tagId: string) {
+	async deleteByTagIds(c: Context, tagIds: string[]) {
 		return withDbConnection(c, async (db) => {
-			const [res] = await db
-				.update(tagsTable)
-				.set({ deletedAt: sql`NOW()`, updatedAt: sql`NOW()` })
-				.where(sql`${tagsTable.id} = ${tagId}`)
+			const res = await db
+				.delete(tagsTable)
+				.where(sql`${inArray(tagsTable.id, tagIds)} `)
 				.returning({ id: tagsTable.id })
 			return res
 		})

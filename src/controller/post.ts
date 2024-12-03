@@ -104,7 +104,6 @@ app.openapi(searchUserPostListRoute, async (c) => {
 		const { q, startDate, endDate, limit, offset } = ctx.req.valid('query')
 		const limitNum = Number(limit)
 		const offsetNum = Number(offset)
-		console.log(startDate, endDate)
 		const { res, totalCount } = await svc.post.getBySearch(
 			ctx,
 			userId,

@@ -15,8 +15,8 @@ class TagService {
 	async updateByTagId(c: Context, tagId: string, body: TagInputSchema) {
 		return await repo.tag.updateByTagId(c, tagId, body)
 	}
-	async deleteByTagId(c: Context, tagId: string) {
-		return await repo.tag.deleteByTagId(c, tagId)
+	async deleteByTagIds(c: Context, tagIds: string[]) {
+		return await repo.tag.deleteByTagIds(c, tagIds)
 	}
 }
 

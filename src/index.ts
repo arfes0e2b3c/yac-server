@@ -8,7 +8,7 @@ import { postTagApp } from './controller/postTag'
 import { tagApp } from './controller/tag'
 import { userApp } from './controller/user'
 import { svc } from './service'
-import { Env } from './types'
+import { ReneEnv } from './types'
 
 const app = new OpenAPIHono().basePath('/api')
 
@@ -43,7 +43,11 @@ app.get(
 )
 
 // scheduledが個別のappからは呼び出せないので仕方なくここに書いている
-const scheduled: ExportedHandlerScheduledHandler<Env> = async (_, env, c) => {
+const scheduled: ExportedHandlerScheduledHandler<ReneEnv> = async (
+	_,
+	env,
+	c
+) => {
 	const ctx = {
 		env,
 	} as Context

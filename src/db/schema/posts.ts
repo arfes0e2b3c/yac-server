@@ -29,7 +29,7 @@ export const postsTable = pgTable('posts', {
 		.notNull()
 		.primaryKey()
 		.$defaultFn(() => ulid()),
-	content: varchar('content', { length: 1000 }).notNull(),
+	content: varchar('content', { length: 4096 }).notNull(),
 	locationLabel: varchar('location_label', { length: 255 }),
 	locationPoint: point('location_point'),
 	imageUrl: varchar('image_url', { length: 255 }),

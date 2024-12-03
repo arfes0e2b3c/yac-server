@@ -58,7 +58,7 @@ class PostRepository {
 				columns: {
 					mediaItemId: false,
 				},
-				orderBy: [desc(postsTable.createdAt)],
+				orderBy: [desc(postsTable.date), desc(postsTable.createdAt)],
 				where: sql`${postsTable.deletedAt} IS NULL and ${postsTable.locationPoint} <@ box(point(${minLat}, ${minLng}), point(${maxLat}, ${maxLng})) and ${postsTable.visibility} = ${PostsTableVisibility.PUBLIC}`,
 				limit,
 			})
@@ -69,7 +69,6 @@ class PostRepository {
 		return withDbConnection(c, async (db) => {
 			const res = await db.query.postsTable.findFirst({
 				columns: {
-					userId: false,
 					mediaItemId: false,
 				},
 				with: {
@@ -134,7 +133,7 @@ class PostRepository {
 					// 	},
 					// },
 				},
-				orderBy: [desc(postsTable.createdAt)],
+				orderBy: [desc(postsTable.date), desc(postsTable.createdAt)],
 				where,
 				limit,
 				offset,
@@ -161,7 +160,7 @@ class PostRepository {
 				columns: {
 					mediaItemId: false,
 				},
-				orderBy: [desc(postsTable.createdAt)],
+				orderBy: [desc(postsTable.date), desc(postsTable.createdAt)],
 				where: sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and ${postsTable.locationPoint} <@ box(point(${minLat}, ${minLng}), point(${maxLat}, ${maxLng}))`,
 				limit,
 			})
@@ -192,7 +191,7 @@ class PostRepository {
 				with: {
 					mediaItem: true,
 				},
-				orderBy: [desc(postsTable.createdAt)],
+				orderBy: [desc(postsTable.date), desc(postsTable.createdAt)],
 				where,
 				limit,
 				offset,
@@ -220,7 +219,7 @@ class PostRepository {
 				with: {
 					mediaItem: true,
 				},
-				orderBy: [desc(postsTable.createdAt)],
+				orderBy: [desc(postsTable.date), desc(postsTable.createdAt)],
 				where,
 				limit,
 				offset,
@@ -243,16 +242,7 @@ class PostRepository {
 	) {
 		return withDbConnection(c, async (db) => {
 			const where = sql`${postTagsTable.tagId} = ${tagId} and ${postsTable.deletedAt} IS NULL`
-			// const postRes = await db
-			// 	.select()
-			// 	.from(postTagsTable)
-			// 	.innerJoin(
-			// 		postsTable,
-			// 		sql`${postTagsTable.postId} = ${postsTable.id} and ${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL`
-			// 	)
-			// 	.where(where)
-			// 	.limit(limit)
-			// 	.offset(offset)
+
 			const postRes = await db.query.postTagsTable.findMany({
 				columns: {
 					postId: false,

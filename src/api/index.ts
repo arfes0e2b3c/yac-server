@@ -1,5 +1,5 @@
-import { cloudNaturalLanguage } from './cloudNaturalLanguage'
+import { openAiApi as openAi } from './openAi'
 
 export const api = {
-	cloudNaturalLanguage,
+	openAi,
 }

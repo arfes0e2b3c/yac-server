@@ -9,6 +9,7 @@ import { tagApp } from './controller/tag'
 import { userApp } from './controller/user'
 import { svc } from './service'
 import { ReneEnv } from './types'
+import { apiApp } from './controller/api'
 
 const app = new OpenAPIHono().basePath('/api')
 
@@ -26,6 +27,7 @@ app.route('/', postApp)
 app.route('/', tagApp)
 app.route('/', mediaItemApp)
 app.route('/', postTagApp)
+app.route('/', apiApp)
 
 app.doc31('/doc', {
 	openapi: '3.1.0',

@@ -224,7 +224,6 @@ class PostRepository {
 				limit,
 				offset,
 			})
-			console.log(postRes)
 			const [countRes] = await db
 				.select({ count: count() })
 				.from(postsTable)

@@ -27,10 +27,8 @@ app.openapi(createPostTagRoute, async (c) => {
 })
 
 app.openapi(deletePostTagRoute, async (c) => {
-	console.log('deletePostTagRoute')
 	return handleErrors(async (ctx) => {
 		const body = ctx.req.valid('json')
-		console.log('cont', body)
 		const res = await svc.postTag.delete(ctx, body)
 		return ctx.json({ ...res })
 	}, c)

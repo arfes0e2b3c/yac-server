@@ -22,3 +22,23 @@ export const evaluateSentimentRoute = createRoute({
 		},
 	},
 })
+
+export const generatePresignedUrlRoute = createRoute({
+	path: '/generatePresignedUrl',
+	method: 'get',
+	description: 'S3の署名付きURLを生成する',
+	operationId: 'generatePresignedUrl',
+	responses: {
+		200: {
+			description: '成功',
+			content: {
+				'application/json': {
+					schema: z.object({
+						url: zString('https://example.com'),
+						key: zString('key'),
+					}),
+				},
+			},
+		},
+	},
+})

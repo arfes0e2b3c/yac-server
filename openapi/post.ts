@@ -33,6 +33,24 @@ export const postListWithMediaItemSchema = z.object({
 	totalCount: zNum(100),
 })
 
+export const postListWithMediaItemAndTagSchema = z.object({
+	posts: z.array(
+		postSchema.extend({
+			mediaItem: mediaItemSchema.nullable(),
+			postTags: z
+				.array(
+					z.object({
+						tag: tagSchema,
+					})
+				)
+				.nullable(),
+		})
+	),
+	limit: zNum(10),
+	offset: zNum(0),
+	totalCount: zNum(100),
+})
+
 export const postDetailSchema = z.object({
 	post: postSchema.extend({
 		mediaItem: mediaItemSchema.nullable(),
@@ -146,7 +164,7 @@ export const fetchUserPostListRoute = createRoute({
 			description: 'ユーザーの投稿一覧',
 			content: {
 				'application/json': {
-					schema: postListWithMediaItemSchema,
+					schema: postListWithMediaItemAndTagSchema,
 				},
 			},
 		},

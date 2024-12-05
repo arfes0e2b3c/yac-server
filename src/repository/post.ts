@@ -120,18 +120,18 @@ class PostRepository {
 				with: {
 					// user: true,
 					mediaItem: true,
-					// postTags: {
-					// 	columns: {
-					// 		postId: false,
-					// 		tagId: false,
-					// 		createdAt: false,
-					// 		updatedAt: false,
-					// 		deletedAt: false,
-					// 	},
-					// 	with: {
-					// 		tag: true,
-					// 	},
-					// },
+					postTags: {
+						columns: {
+							postId: false,
+							tagId: false,
+							createdAt: false,
+							updatedAt: false,
+							deletedAt: false,
+						},
+						with: {
+							tag: true,
+						},
+					},
 				},
 				orderBy: [desc(postsTable.date), desc(postsTable.createdAt)],
 				where,

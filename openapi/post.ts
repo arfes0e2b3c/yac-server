@@ -37,13 +37,11 @@ export const postListWithMediaItemAndTagSchema = z.object({
 	posts: z.array(
 		postSchema.extend({
 			mediaItem: mediaItemSchema.nullable(),
-			postTags: z
-				.array(
-					z.object({
-						tag: tagSchema,
-					})
-				)
-				.nullable(),
+			postTags: z.array(
+				z.object({
+					tag: tagSchema,
+				})
+			),
 		})
 	),
 	limit: zNum(10),

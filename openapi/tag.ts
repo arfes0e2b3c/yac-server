@@ -100,7 +100,7 @@ export const searchTagListRoute = createRoute({
 			description: '検索結果',
 			content: {
 				'application/json': {
-					schema: tagListSchema,
+					schema: tagListInfiniteSchema,
 				},
 			},
 		},

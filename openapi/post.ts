@@ -94,12 +94,18 @@ const postInputSchema = z.object({
 	date: z.coerce.date(),
 })
 
+const createPostInputSchema = z.object({
+	post: postInputSchema,
+	tagIds: z.array(zString('01J8F3RR15SSSVV2F3AGMJ4ZE7')).nullable(),
+})
+
 export type PostSchema = z.infer<typeof postSchema>
 export type PostListWithMediaitemSchema = z.infer<
 	typeof postListWithMediaItemSchema
 >
 export type PostDetailSchema = z.infer<typeof postDetailSchema>
 export type PostInputSchema = z.infer<typeof postInputSchema>
+export type CreatePostInputSchema = z.infer<typeof createPostInputSchema>
 
 export const fetchPostListRoute = createRoute({
 	path: '/posts',
@@ -316,7 +322,7 @@ export const createPostRoute = createRoute({
 			required: true,
 			content: {
 				'application/json': {
-					schema: postInputSchema,
+					schema: createPostInputSchema,
 				},
 			},
 		},

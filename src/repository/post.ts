@@ -2,6 +2,7 @@ import { count, desc, eq, sql } from 'drizzle-orm'
 import { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import {
+	CreatePostInputSchema,
 	InfiniteBaseQueryWithDateSchema,
 	PostInputSchema,
 } from '../../openapi/post'
@@ -276,7 +277,7 @@ class PostRepository {
 		})
 	}
 
-	async create(c: Context, body: PostInputSchema, score: number) {
+	async create(c: Context, body: CreatePostInputSchema['post'], score: number) {
 		return withDbConnection(c, async (db) => {
 			const [res] = await db
 				.insert(postsTable)

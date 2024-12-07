@@ -9,6 +9,15 @@ class TagService {
 	async getById(c: Context, tagId: string) {
 		return await repo.tag.getById(c, tagId)
 	}
+	async getBySearch(
+		c: Context,
+		userId: string,
+		q: string,
+		limit: number,
+		offset: number
+	) {
+		return await repo.tag.getBySearch(c, userId, q, limit, offset)
+	}
 	async create(c: Context, body: TagInputSchema) {
 		return await repo.tag.create(c, body)
 	}

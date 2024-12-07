@@ -212,7 +212,7 @@ class PostRepository {
 		mediaItemId: string
 	) {
 		return withDbConnection(c, async (db) => {
-			const where = sql`${postsTable.mediaItemId} = ${mediaItemId} and ${postsTable.deletedAt} IS NULL`
+			const where = sql`${postsTable.mediaItemId} = ${mediaItemId} and ${postsTable.deletedAt} IS NULL and ${postsTable.visibility} = ${PostsTableVisibility.PUBLIC}`
 			const postRes = await db.query.postsTable.findMany({
 				columns: {
 					userId: false,

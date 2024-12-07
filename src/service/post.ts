@@ -1,5 +1,6 @@
 import { Context } from 'hono'
 import {
+	CreatePostInputSchema,
 	InfiniteBaseQueryWithDateSchema,
 	PostInputSchema,
 } from '../../openapi/post'
@@ -93,9 +94,13 @@ class PostService {
 		return await repo.post.getByUserTagId(c, userId, tagId, limit, offset)
 	}
 
-	async create(c: Context, body: PostInputSchema) {
-		const score = await api.openAi.evaluateSentiment(c, body.content)
-		return await repo.post.create(c, body, score)
+	async create(c: Context, body: CreatePostInputSchema) {
+		const score = await api.openAi.evaluateSentiment(c, body.post.content)
+		const postRes = await repo.post.create(c, body.post, score)
+		for (const tagId of body.tagIds ?? []) {
+			await repo.postTag.create(c, { postId: postRes.id, tagId })
+		}
+		return postRes
 	}
 	async updateByPostId(c: Context, postId: string, body: PostInputSchema) {
 		return await repo.post.updateByPostId(c, postId, body)

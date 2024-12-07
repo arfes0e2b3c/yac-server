@@ -1,3 +1,4 @@
+import { apiService as api } from './api'
 import { mediaItemSvc as mediaItem } from './mediaItem'
 import { postSvc as post } from './post'
 import { postTagSvc as postTag } from './postTag'
@@ -10,4 +11,5 @@ export const svc = {
 	tag,
 	mediaItem,
 	postTag,
+	api,
 }

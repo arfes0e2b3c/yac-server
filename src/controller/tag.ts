@@ -4,6 +4,7 @@ import {
 	deleteTagRoute,
 	fetchTagDetailRoute,
 	fetchUserTagListRoute,
+	searchTagListRoute,
 	updateTagRoute,
 } from '../../openapi/tag'
 import { handleErrors } from '../error'
@@ -37,6 +38,28 @@ app.openapi(fetchTagDetailRoute, async (c) => {
 		const { tagId } = ctx.req.valid('param')
 		const res = await svc.tag.getById(ctx, tagId)
 		return ctx.json({ tag: res })
+	}, c)
+})
+
+app.openapi(searchTagListRoute, async (c) => {
+	return handleErrors(async (ctx) => {
+		const { userId } = ctx.req.valid('param')
+		const { q, limit, offset } = ctx.req.valid('query')
+		const limitNum = Number(limit)
+		const offsetNum = Number(offset)
+		const { res, totalCount } = await svc.tag.getBySearch(
+			ctx,
+			userId,
+			q,
+			limitNum,
+			offsetNum
+		)
+		return ctx.json({
+			tags: res,
+			limit: limitNum,
+			offset: offsetNum,
+			totalCount,
+		})
 	}, c)
 })
 

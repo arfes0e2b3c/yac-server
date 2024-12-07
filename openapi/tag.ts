@@ -80,6 +80,33 @@ export const fetchTagDetailRoute = createRoute({
 	},
 })
 
+export const searchTagListRoute = createRoute({
+	path: '/users/{userId}/tags/search',
+	method: 'get',
+	description: 'タグを検索する',
+	operationId: 'searchTagList',
+	request: {
+		params: z.object({
+			userId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
+		}),
+		query: z.object({
+			q: zString('キーワード'),
+			limit: zString('10').default('10'),
+			offset: zString('0').default('0'),
+		}),
+	},
+	responses: {
+		200: {
+			description: '検索結果',
+			content: {
+				'application/json': {
+					schema: tagListInfiniteSchema,
+				},
+			},
+		},
+	},
+})
+
 export const createTagRoute = createRoute({
 	path: '/tags',
 	method: 'post',

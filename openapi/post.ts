@@ -33,15 +33,35 @@ export const postListWithMediaItemSchema = z.object({
 	totalCount: zNum(100),
 })
 
+export const postListWithMediaItemAndTagSchema = z.object({
+	posts: z.array(
+		postSchema.extend({
+			mediaItem: mediaItemSchema.nullable(),
+			postTags: z
+				.array(
+					z.object({
+						tag: tagSchema,
+					})
+				)
+				.optional(),
+		})
+	),
+	limit: zNum(10),
+	offset: zNum(0),
+	totalCount: zNum(100),
+})
+
 export const postDetailSchema = z.object({
 	post: postSchema.extend({
 		mediaItem: mediaItemSchema.nullable(),
 		userId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
-		postTags: z.array(
-			z.object({
-				tag: tagSchema,
-			})
-		),
+		postTags: z
+			.array(
+				z.object({
+					tag: tagSchema,
+				})
+			)
+			.nullable(),
 	}),
 })
 
@@ -74,12 +94,18 @@ const postInputSchema = z.object({
 	date: z.coerce.date(),
 })
 
+const createPostInputSchema = z.object({
+	post: postInputSchema,
+	tagIds: z.array(zString('01J8F3RR15SSSVV2F3AGMJ4ZE7')).nullable(),
+})
+
 export type PostSchema = z.infer<typeof postSchema>
 export type PostListWithMediaitemSchema = z.infer<
 	typeof postListWithMediaItemSchema
 >
 export type PostDetailSchema = z.infer<typeof postDetailSchema>
 export type PostInputSchema = z.infer<typeof postInputSchema>
+export type CreatePostInputSchema = z.infer<typeof createPostInputSchema>
 
 export const fetchPostListRoute = createRoute({
 	path: '/posts',
@@ -146,7 +172,7 @@ export const fetchUserPostListRoute = createRoute({
 			description: 'ユーザーの投稿一覧',
 			content: {
 				'application/json': {
-					schema: postListWithMediaItemSchema,
+					schema: postListWithMediaItemAndTagSchema,
 				},
 			},
 		},
@@ -296,7 +322,7 @@ export const createPostRoute = createRoute({
 			required: true,
 			content: {
 				'application/json': {
-					schema: postInputSchema,
+					schema: createPostInputSchema,
 				},
 			},
 		},

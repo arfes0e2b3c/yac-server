@@ -2,6 +2,7 @@ import { count, desc, eq, sql } from 'drizzle-orm'
 import { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import {
+	CreatePostInputSchema,
 	InfiniteBaseQueryWithDateSchema,
 	PostInputSchema,
 } from '../../openapi/post'
@@ -120,18 +121,18 @@ class PostRepository {
 				with: {
 					// user: true,
 					mediaItem: true,
-					// postTags: {
-					// 	columns: {
-					// 		postId: false,
-					// 		tagId: false,
-					// 		createdAt: false,
-					// 		updatedAt: false,
-					// 		deletedAt: false,
-					// 	},
-					// 	with: {
-					// 		tag: true,
-					// 	},
-					// },
+					postTags: {
+						columns: {
+							postId: false,
+							tagId: false,
+							createdAt: false,
+							updatedAt: false,
+							deletedAt: false,
+						},
+						with: {
+							tag: true,
+						},
+					},
 				},
 				orderBy: [desc(postsTable.date), desc(postsTable.createdAt)],
 				where,
@@ -211,7 +212,7 @@ class PostRepository {
 		mediaItemId: string
 	) {
 		return withDbConnection(c, async (db) => {
-			const where = sql`${postsTable.mediaItemId} = ${mediaItemId} and ${postsTable.deletedAt} IS NULL`
+			const where = sql`${postsTable.mediaItemId} = ${mediaItemId} and ${postsTable.deletedAt} IS NULL and ${postsTable.visibility} = ${PostsTableVisibility.PUBLIC}`
 			const postRes = await db.query.postsTable.findMany({
 				columns: {
 					userId: false,
@@ -224,7 +225,6 @@ class PostRepository {
 				limit,
 				offset,
 			})
-			console.log(postRes)
 			const [countRes] = await db
 				.select({ count: count() })
 				.from(postsTable)
@@ -277,7 +277,7 @@ class PostRepository {
 		})
 	}
 
-	async create(c: Context, body: PostInputSchema, score: number) {
+	async create(c: Context, body: CreatePostInputSchema['post'], score: number) {
 		return withDbConnection(c, async (db) => {
 			const [res] = await db
 				.insert(postsTable)

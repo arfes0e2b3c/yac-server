@@ -38,6 +38,27 @@ class TagRepository {
 			return res
 		})
 	}
+	async getBySearch(
+		c: Context,
+		userId: string,
+		q: string,
+		limit: number,
+		offset: number
+	) {
+		return withDbConnection(c, async (db) => {
+			const where = sql`${tagsTable.userId} = ${userId} and ${tagsTable.deletedAt} IS NULL and ${tagsTable.name} ILIKE ${`%${q}%`}`
+			const tagRes = await db.query.tagsTable.findMany({
+				where,
+				limit,
+				offset,
+			})
+			const [tagCount] = await db
+				.select({ count: count() })
+				.from(tagsTable)
+				.where(where)
+			return { res: tagRes, totalCount: tagCount.count }
+		})
+	}
 	async create(c: Context, body: TagInputSchema) {
 		return withDbConnection(c, async (db) => {
 			const [res] = await db

@@ -1,0 +1,1 @@
+ALTER TABLE "posts" ADD COLUMN "encrypt_content" "bytea" DEFAULT '' NOT NULL;

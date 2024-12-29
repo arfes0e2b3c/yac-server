@@ -1,5 +1,6 @@
 import { count, desc, eq, sql } from 'drizzle-orm'
 import { Context } from 'hono'
+import { env as getEnv } from 'hono/adapter'
 import { HTTPException } from 'hono/http-exception'
 import {
 	CreatePostInputSchema,
@@ -9,15 +10,23 @@ import {
 import { withDbConnection } from '../db/connection'
 import { postTagsTable } from '../db/schema/postTags'
 import { PostsTableVisibility, postsTable } from '../db/schema/posts'
+import { ReneEnv } from '../types'
 
 class PostRepository {
 	async getAll(c: Context) {
+		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
 		return withDbConnection(c, async (db) => {
 			const where = sql`${postsTable.deletedAt} IS NULL`
 			const postRes = await db.query.postsTable.findMany({
 				columns: {
 					userId: false,
 					mediaItemId: false,
+				},
+				extras: {
+					content:
+						sql`pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text`.as(
+							'content'
+						),
 				},
 				with: {
 					user: true,
@@ -54,6 +63,7 @@ class PostRepository {
 		minLng: number,
 		maxLng: number
 	) {
+		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
 		return withDbConnection(c, async (db) => {
 			const x = await db.query.postsTable.findMany({
 				with: {
@@ -65,6 +75,12 @@ class PostRepository {
 							deletedAt: false,
 						},
 					},
+				},
+				extras: {
+					content:
+						sql`pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text`.as(
+							'content'
+						),
 				},
 				columns: {
 					mediaItemId: false,
@@ -78,10 +94,18 @@ class PostRepository {
 	}
 
 	async getByPostId(c: Context, postId: string) {
+		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
+
 		return withDbConnection(c, async (db) => {
 			const res = await db.query.postsTable.findFirst({
 				columns: {
 					mediaItemId: false,
+				},
+				extras: {
+					content:
+						sql`pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text`.as(
+							'content'
+						),
 				},
 				with: {
 					user: true,
@@ -117,6 +141,8 @@ class PostRepository {
 		query: InfiniteBaseQueryWithDateSchema
 	) {
 		const { startDate, endDate, limit, offset } = query
+		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
+
 		return withDbConnection(c, async (db) => {
 			const where = sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL`
 			if (startDate !== '' && endDate !== '') {
@@ -128,6 +154,12 @@ class PostRepository {
 				columns: {
 					userId: false,
 					mediaItemId: false,
+				},
+				extras: {
+					content:
+						sql`pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text`.as(
+							'content'
+						),
 				},
 				with: {
 					// user: true,
@@ -150,6 +182,7 @@ class PostRepository {
 				limit,
 				offset,
 			})
+			console.log(postRes[0].content)
 			const [countRes] = await db
 				.select({ count: count() })
 				.from(postsTable)
@@ -167,10 +200,18 @@ class PostRepository {
 		minLng: number,
 		maxLng: number
 	) {
+		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
+
 		return withDbConnection(c, async (db) => {
 			return await db.query.postsTable.findMany({
 				columns: {
 					mediaItemId: false,
+				},
+				extras: {
+					content:
+						sql`pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text`.as(
+							'content'
+						),
 				},
 				orderBy: [desc(postsTable.date), desc(postsTable.createdAt)],
 				where: sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and ${postsTable.locationPoint} <@ box(point(${minLat}, ${minLng}), point(${maxLat}, ${maxLng}))`,
@@ -188,6 +229,8 @@ class PostRepository {
 		limit: number,
 		offset: number
 	) {
+		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
+
 		return withDbConnection(c, async (db) => {
 			const where = sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and ${postsTable.content} ILIKE ${`%${q}%`}`
 			if (startDate && endDate) {
@@ -202,6 +245,12 @@ class PostRepository {
 				},
 				with: {
 					mediaItem: true,
+				},
+				extras: {
+					content:
+						sql`pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text`.as(
+							'content'
+						),
 				},
 				orderBy: [desc(postsTable.date), desc(postsTable.createdAt)],
 				where,
@@ -222,11 +271,19 @@ class PostRepository {
 		offset: number,
 		mediaItemId: string
 	) {
+		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
+
 		return withDbConnection(c, async (db) => {
 			const where = sql`${postsTable.mediaItemId} = ${mediaItemId} and ${postsTable.deletedAt} IS NULL and ${postsTable.visibility} = ${PostsTableVisibility.PUBLIC}`
 			const postRes = await db.query.postsTable.findMany({
 				columns: {
 					userId: false,
+				},
+				extras: {
+					content:
+						sql`pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text`.as(
+							'content'
+						),
 				},
 				with: {
 					mediaItem: true,
@@ -259,6 +316,7 @@ class PostRepository {
 		limit: number,
 		offset: number
 	) {
+		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
 		return withDbConnection(c, async (db) => {
 			const where = sql`${postTagsTable.tagId} = ${tagId} and ${postsTable.deletedAt} IS NULL`
 
@@ -269,6 +327,12 @@ class PostRepository {
 					createdAt: false,
 					updatedAt: false,
 					deletedAt: false,
+				},
+				extras: {
+					content:
+						sql`pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text`.as(
+							'content'
+						),
 				},
 				with: {
 					post: {
@@ -297,21 +361,30 @@ class PostRepository {
 	}
 
 	async create(c: Context, body: CreatePostInputSchema['post'], score: number) {
+		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
 		return withDbConnection(c, async (db) => {
 			const [res] = await db
 				.insert(postsTable)
-				.values({ updatedAt: sql`NOW()`, score, ...body })
+				.values({
+					updatedAt: sql`NOW()`,
+					score,
+					...body,
+					content: sql`pgp_sym_encrypt(${body.content}, ${cryptKey})::bytea`,
+				})
 				.returning({ id: postsTable.id })
 			return res
 		})
 	}
 	async updateByPostId(c: Context, postId: string, body: PostInputSchema) {
+		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
+
 		return withDbConnection(c, async (db) => {
 			const [res] = await db
 				.update(postsTable)
 				.set({
 					updatedAt: sql`NOW()`,
 					...body,
+					content: sql`pgp_sym_encrypt(${body.content}, ${cryptKey})::bytea`,
 				})
 				.where(sql`${postsTable.id} = ${postId}`)
 				.returning({ id: postsTable.id })

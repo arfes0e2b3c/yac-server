@@ -1,5 +1,6 @@
 import { relations, sql } from 'drizzle-orm'
 import {
+	customType,
 	doublePrecision,
 	pgEnum,
 	pgTable,
@@ -10,8 +11,8 @@ import {
 import { ulid } from 'ulid'
 import { mediaItemsTable } from './mediaItems'
 import { postLikesTable } from './postLikes'
-import { usersTable } from './users'
 import { postTagsTable } from './postTags'
+import { usersTable } from './users'
 
 export const visibilityEnum = pgEnum('visibility', [
 	'private',
@@ -24,6 +25,11 @@ export const PostsTableVisibility = {
 	PUBLIC: visibilityEnum.enumValues[1],
 	ONLY_FOLLOWERS: visibilityEnum.enumValues[2],
 }
+const encryptedText = customType<{ data: Buffer }>({
+	dataType() {
+		return 'bytea'
+	},
+})
 
 export const postsTable = pgTable('posts', {
 	id: varchar('id', { length: 36 })
@@ -31,6 +37,9 @@ export const postsTable = pgTable('posts', {
 		.primaryKey()
 		.$defaultFn(() => ulid()),
 	content: varchar('content', { length: 4096 }).notNull(),
+	encryptContent: encryptedText('encrypt_content', { length: 8192 })
+		.notNull()
+		.default(sql`''`),
 	locationLabel: varchar('location_label', { length: 255 }),
 	locationPoint: point('location_point'),
 	imageUrl: varchar('image_url', { length: 255 }),

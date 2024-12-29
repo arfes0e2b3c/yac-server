@@ -1,6 +1,7 @@
 import { relations, sql } from 'drizzle-orm'
 import { pgTable, timestamp, varchar } from 'drizzle-orm/pg-core'
 import { ulid } from 'ulid'
+import { postLikesTable } from './postLikes'
 import { postsTable } from './posts'
 import { tagsTable } from './tags'
 
@@ -24,6 +25,7 @@ export const usersTable = pgTable('users', {
 export const usersRelation = relations(usersTable, ({ many }) => ({
 	tagsTable: many(tagsTable),
 	postsTable: many(postsTable),
+	postLikes: many(postLikesTable),
 }))
 
 export type UsersTableSchema = typeof usersTable.$inferSelect

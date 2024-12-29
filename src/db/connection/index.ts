@@ -2,10 +2,10 @@ import { drizzle } from 'drizzle-orm/node-postgres'
 import { Context } from 'hono'
 import { env as getEnv } from 'hono/adapter'
 import { Client } from 'pg'
-import { Env } from '../../types'
+import { ReneEnv } from '../../types'
 import { schema } from '../schema'
 
-const getDbConnection = (env: Env) => {
+const getDbConnection = (env: ReneEnv) => {
 	const client = new Client({
 		host: env.DB_HOST || 'localhost',
 		user: env.DB_USER || 'root',
@@ -23,7 +23,7 @@ export const withDbConnection = async <T>(
 	c: Context,
 	fn: (db: ReturnType<typeof getDbConnection>['db']) => Promise<T>
 ) => {
-	const env = getEnv<Env>(c)
+	const env = getEnv<ReneEnv>(c)
 	const { db, client } = getDbConnection(env)
 	try {
 		return await fn(db)

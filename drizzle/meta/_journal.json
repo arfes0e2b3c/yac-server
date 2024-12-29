@@ -134,6 +134,27 @@
       "when": 1733203899296,
       "tag": "0018_legal_cobalt_man",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1735124664341,
+      "tag": "0019_brave_omega_red",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1735127149556,
+      "tag": "0020_gray_spencer_smythe",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1735408275817,
+      "tag": "0021_gifted_maestro",
+      "breakpoints": true
     }
   ]
 }

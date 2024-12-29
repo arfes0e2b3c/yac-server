@@ -1,8 +1,8 @@
 import { relations, sql } from 'drizzle-orm'
 import { pgTable, timestamp, unique, varchar } from 'drizzle-orm/pg-core'
 import { ulid } from 'ulid'
-import { postTagsTable } from './postTags'
 import { usersTable } from './users'
+import { postTagsTable } from './postTags'
 
 export const tagsTable = pgTable(
 	'tags',

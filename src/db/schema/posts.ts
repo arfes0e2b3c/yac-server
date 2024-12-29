@@ -9,8 +9,9 @@ import {
 } from 'drizzle-orm/pg-core'
 import { ulid } from 'ulid'
 import { mediaItemsTable } from './mediaItems'
-import { postTagsTable } from './postTags'
+import { postLikesTable } from './postLikes'
 import { usersTable } from './users'
+import { postTagsTable } from './postTags'
 
 export const visibilityEnum = pgEnum('visibility', [
 	'private',
@@ -65,6 +66,7 @@ export const postsRelation = relations(postsTable, ({ one, many }) => ({
 		references: [mediaItemsTable.id],
 	}),
 	postTags: many(postTagsTable),
+	postLikes: many(postLikesTable),
 }))
 
 export type PostsTableSchema = typeof postsTable.$inferSelect

@@ -55,7 +55,17 @@ class PostRepository {
 		maxLng: number
 	) {
 		return withDbConnection(c, async (db) => {
-			return await db.query.postsTable.findMany({
+			const x = await db.query.postsTable.findMany({
+				with: {
+					postLikes: {
+						columns: {
+							postId: false,
+							createdAt: false,
+							updatedAt: false,
+							deletedAt: false,
+						},
+					},
+				},
 				columns: {
 					mediaItemId: false,
 				},
@@ -63,6 +73,7 @@ class PostRepository {
 				where: sql`${postsTable.deletedAt} IS NULL and ${postsTable.locationPoint} <@ box(point(${minLat}, ${minLng}), point(${maxLat}, ${maxLng})) and ${postsTable.visibility} = ${PostsTableVisibility.PUBLIC}`,
 				limit,
 			})
+			return x
 		})
 	}
 
@@ -219,6 +230,14 @@ class PostRepository {
 				},
 				with: {
 					mediaItem: true,
+					postLikes: {
+						columns: {
+							postId: false,
+							createdAt: false,
+							updatedAt: false,
+							deletedAt: false,
+						},
+					},
 				},
 				orderBy: [desc(postsTable.date), desc(postsTable.createdAt)],
 				where,

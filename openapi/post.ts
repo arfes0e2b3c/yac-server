@@ -22,6 +22,16 @@ export const postListSchema = z.object({
 	posts: z.array(postSchema),
 })
 
+export const postWithPostLikesSchema = z.object({
+	posts: z.array(
+		postSchema.extend({
+			postLikes: z.array(
+				z.object({ userId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7') })
+			),
+		})
+	),
+})
+
 export const postListWithMediaItemSchema = z.object({
 	posts: z.array(
 		postSchema.extend({
@@ -44,6 +54,20 @@ export const postListWithMediaItemAndTagSchema = z.object({
 					})
 				)
 				.optional(),
+		})
+	),
+	limit: zNum(10),
+	offset: zNum(0),
+	totalCount: zNum(100),
+})
+
+export const postListWithMediaItemAndPostLikesSchema = z.object({
+	posts: z.array(
+		postSchema.extend({
+			mediaItem: mediaItemSchema.nullable(),
+			postLikes: z.array(
+				z.object({ userId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7') })
+			),
 		})
 	),
 	limit: zNum(10),
@@ -100,6 +124,7 @@ const createPostInputSchema = z.object({
 })
 
 export type PostSchema = z.infer<typeof postSchema>
+export type PostWithPostLikesSchema = z.infer<typeof postWithPostLikesSchema>
 export type PostListWithMediaitemSchema = z.infer<
 	typeof postListWithMediaItemSchema
 >
@@ -149,7 +174,7 @@ export const fetchPostListInRegionRoute = createRoute({
 			description: '投稿一覧',
 			content: {
 				'application/json': {
-					schema: postListSchema,
+					schema: postWithPostLikesSchema,
 				},
 			},
 		},
@@ -256,7 +281,7 @@ export const fetchMediaItemPostListRoute = createRoute({
 			description: 'コンテンツに紐づく投稿一覧',
 			content: {
 				'application/json': {
-					schema: postListWithMediaItemSchema,
+					schema: postListWithMediaItemAndPostLikesSchema,
 				},
 			},
 		},

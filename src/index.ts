@@ -2,14 +2,15 @@ import { swaggerUI } from '@hono/swagger-ui'
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
+import { apiApp } from './controller/api'
 import { mediaItemApp } from './controller/mediaItem'
 import { postApp } from './controller/post'
+import { postLikeApp } from './controller/postLike'
 import { postTagApp } from './controller/postTag'
 import { tagApp } from './controller/tag'
 import { userApp } from './controller/user'
 import { svc } from './service'
 import { ReneEnv } from './types'
-import { apiApp } from './controller/api'
 
 const app = new OpenAPIHono().basePath('/api')
 
@@ -28,6 +29,7 @@ app.route('/', tagApp)
 app.route('/', mediaItemApp)
 app.route('/', postTagApp)
 app.route('/', apiApp)
+app.route('/', postLikeApp)
 
 app.doc31('/doc', {
 	openapi: '3.1.0',

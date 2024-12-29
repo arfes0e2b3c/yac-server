@@ -1,4 +1,5 @@
 import * as mediaItems from './mediaItems'
+import * as postLikes from './postLikes'
 import * as postTags from './postTags'
 import * as posts from './posts'
 import * as tags from './tags'
@@ -10,4 +11,5 @@ export const schema = {
 	...tags,
 	...mediaItems,
 	...postTags,
+	...postLikes,
 }

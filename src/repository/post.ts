@@ -328,12 +328,6 @@ class PostRepository {
 					updatedAt: false,
 					deletedAt: false,
 				},
-				extras: {
-					content:
-						sql`pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text`.as(
-							'content'
-						),
-				},
 				with: {
 					post: {
 						columns: {
@@ -341,6 +335,12 @@ class PostRepository {
 						},
 						with: {
 							mediaItem: true,
+						},
+						extras: {
+							content:
+								sql`pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text`.as(
+									'content'
+								),
 						},
 					},
 				},
@@ -368,8 +368,9 @@ class PostRepository {
 				.values({
 					updatedAt: sql`NOW()`,
 					score,
+					encryptContent: sql`pgp_sym_encrypt(${body.content}, ${cryptKey})::bytea`,
 					...body,
-					content: sql`pgp_sym_encrypt(${body.content}, ${cryptKey})::bytea`,
+					content: '',
 				})
 				.returning({ id: postsTable.id })
 			return res

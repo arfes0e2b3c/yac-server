@@ -118,7 +118,7 @@ const postInputSchema = z.object({
 	date: z.coerce.date(),
 })
 
-const createPostInputSchema = z.object({
+const upsertPostInputSchema = z.object({
 	post: postInputSchema,
 	tagIds: z.array(zString('01J8F3RR15SSSVV2F3AGMJ4ZE7')).nullable(),
 })
@@ -130,7 +130,7 @@ export type PostListWithMediaitemSchema = z.infer<
 >
 export type PostDetailSchema = z.infer<typeof postDetailSchema>
 export type PostInputSchema = z.infer<typeof postInputSchema>
-export type CreatePostInputSchema = z.infer<typeof createPostInputSchema>
+export type UpsertPostInputSchema = z.infer<typeof upsertPostInputSchema>
 
 export const fetchPostListRoute = createRoute({
 	path: '/posts',
@@ -315,6 +315,61 @@ export const fetchUserTagPostListRoute = createRoute({
 	},
 })
 
+export const fetchPostLikePostListRoute = createRoute({
+	path: 'users/postLikes/{userId}/posts',
+	method: 'get',
+	description: 'いいねした投稿一覧を取得する',
+	operationId: 'fetchPostLikePostList',
+	request: {
+		query: z.object({
+			limit: zString('10').default('10'),
+			offset: zString('0').default('0'),
+		}),
+		params: z.object({
+			userId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
+		}),
+	},
+	responses: {
+		200: {
+			description: 'いいねした投稿一覧',
+			content: {
+				'application/json': {
+					schema: postListWithMediaItemAndPostLikesSchema,
+				},
+			},
+		},
+	},
+})
+
+export const searchPostLikePostListRoute = createRoute({
+	path: 'users/postLikes/{userId}/posts/search',
+	method: 'get',
+	description: 'いいねした投稿を検索する',
+	operationId: 'searchPostLikePostList',
+	request: {
+		query: z.object({
+			q: zString('キーワード'),
+			startDate: zString('2024-09-23 07:57:07'),
+			endDate: zString('2024-09-23 07:57:07'),
+			limit: zString('10').default('10'),
+			offset: zString('0').default('0'),
+		}),
+		params: z.object({
+			userId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
+		}),
+	},
+	responses: {
+		200: {
+			description: '検索結果',
+			content: {
+				'application/json': {
+					schema: postListWithMediaItemAndPostLikesSchema,
+				},
+			},
+		},
+	},
+})
+
 export const fetchPostDetailRoute = createRoute({
 	path: '/posts/{postId}',
 	method: 'get',
@@ -347,7 +402,7 @@ export const createPostRoute = createRoute({
 			required: true,
 			content: {
 				'application/json': {
-					schema: createPostInputSchema,
+					schema: upsertPostInputSchema,
 				},
 			},
 		},
@@ -376,7 +431,7 @@ export const updatePostRoute = createRoute({
 			required: true,
 			content: {
 				'application/json': {
-					schema: postInputSchema,
+					schema: upsertPostInputSchema,
 				},
 			},
 		},

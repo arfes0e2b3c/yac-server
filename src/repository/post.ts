@@ -3,11 +3,11 @@ import { Context } from 'hono'
 import { env as getEnv } from 'hono/adapter'
 import { HTTPException } from 'hono/http-exception'
 import {
-	CreatePostInputSchema,
 	InfiniteBaseQueryWithDateSchema,
-	PostInputSchema,
+	UpsertPostInputSchema,
 } from '../../openapi/post'
 import { withDbConnection } from '../db/connection'
+import { postLikesTable } from '../db/schema/postLikes'
 import { postTagsTable } from '../db/schema/postTags'
 import { PostsTableVisibility, postsTable } from '../db/schema/posts'
 import { ReneEnv } from '../types'
@@ -232,7 +232,7 @@ class PostRepository {
 		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
 
 		return withDbConnection(c, async (db) => {
-			const where = sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and ${postsTable.content} ILIKE ${`%${q}%`}`
+			const where = sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text ILIKE ${`%${q}%`}`
 			if (startDate && endDate) {
 				where.append(
 					sql` and ${postsTable.date} >= ${startDate} and ${postsTable.date} <= ${endDate}`
@@ -360,7 +360,120 @@ class PostRepository {
 		})
 	}
 
-	async create(c: Context, body: CreatePostInputSchema['post'], score: number) {
+	async getByPostLikeUserId(
+		c: Context,
+		userId: string,
+		limit: number,
+		offset: number
+	) {
+		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
+		return withDbConnection(c, async (db) => {
+			const where = sql`${postsTable.deletedAt} IS NULL and ${postsTable.visibility} = ${PostsTableVisibility.PUBLIC}`
+			const postRes = await db.query.postLikesTable.findMany({
+				columns: {
+					postId: false,
+					updatedAt: false,
+					deletedAt: false,
+				},
+				with: {
+					post: {
+						columns: {
+							mediaItemId: false,
+							encryptContent: false,
+						},
+						with: {
+							mediaItem: true,
+							postLikes: {
+								columns: {
+									postId: false,
+									createdAt: false,
+									updatedAt: false,
+									deletedAt: false,
+								},
+							},
+						},
+						extras: {
+							content:
+								sql`pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text`.as(
+									'content'
+								),
+						},
+					},
+				},
+				where: sql`${postLikesTable.userId} = ${userId}`,
+				limit,
+				offset,
+				orderBy: [desc(postLikesTable.createdAt)],
+			})
+			const postList = postRes.map((item) => item.post)
+			const [countRes] = await db
+				.select({ count: count() })
+				.from(postLikesTable)
+				.innerJoin(postsTable, eq(postLikesTable.postId, postsTable.id))
+				.where(sql`${postLikesTable.userId} = ${userId}`)
+			return { res: postList, totalCount: countRes.count }
+		})
+	}
+
+	async getBySearchPostLikeUserId(
+		c: Context,
+		userId: string,
+		q: string,
+		startDate: string,
+		endDate: string,
+		limit: number,
+		offset: number
+	) {
+		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
+		return withDbConnection(c, async (db) => {
+			const where = sql`${postLikesTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text ILIKE ${`%${q}%`} and ${postsTable.visibility} = ${PostsTableVisibility.PUBLIC}`
+			const postRes = await db.query.postLikesTable.findMany({
+				columns: {
+					postId: false,
+					updatedAt: false,
+					deletedAt: false,
+				},
+				with: {
+					post: {
+						columns: {
+							mediaItemId: false,
+							encryptContent: false,
+						},
+						with: {
+							mediaItem: true,
+							postLikes: {
+								columns: {
+									postId: false,
+									createdAt: false,
+									updatedAt: false,
+									deletedAt: false,
+								},
+							},
+						},
+						extras: {
+							content:
+								sql`pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text`.as(
+									'content'
+								),
+						},
+					},
+				},
+				where,
+				limit,
+				offset,
+				orderBy: [desc(postLikesTable.createdAt)],
+			})
+			const postList = postRes.map((item) => item.post)
+			const [countRes] = await db
+				.select({ count: count() })
+				.from(postLikesTable)
+				.innerJoin(postsTable, eq(postLikesTable.postId, postsTable.id))
+				.where(sql`${postLikesTable.userId} = ${userId}`)
+			return { res: postList, totalCount: countRes.count }
+		})
+	}
+
+	async create(c: Context, body: UpsertPostInputSchema['post'], score: number) {
 		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
 		return withDbConnection(c, async (db) => {
 			const [res] = await db
@@ -376,16 +489,23 @@ class PostRepository {
 			return res
 		})
 	}
-	async updateByPostId(c: Context, postId: string, body: PostInputSchema) {
+	async updateByPostId(
+		c: Context,
+		postId: string,
+		body: UpsertPostInputSchema['post'],
+		score: number
+	) {
 		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
-
+		console.log('cryptKey', postId)
 		return withDbConnection(c, async (db) => {
 			const [res] = await db
 				.update(postsTable)
 				.set({
-					updatedAt: sql`NOW()`,
 					...body,
-					content: sql`pgp_sym_encrypt(${body.content}, ${cryptKey})::bytea`,
+					content: '',
+					encryptContent: sql`pgp_sym_encrypt(${body.content}, ${cryptKey})::bytea`,
+					updatedAt: sql`NOW()`,
+					score,
 				})
 				.where(sql`${postsTable.id} = ${postId}`)
 				.returning({ id: postsTable.id })

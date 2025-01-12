@@ -5,11 +5,13 @@ import {
 	deletePostRoute,
 	fetchMediaItemPostListRoute,
 	fetchPostDetailRoute,
+	fetchPostLikePostListRoute,
 	fetchPostListInRegionRoute,
 	fetchPostListRoute,
 	fetchUserPostListInRegionRoute,
 	fetchUserPostListRoute,
 	fetchUserTagPostListRoute,
+	searchPostLikePostListRoute,
 	searchUserPostListRoute,
 	updatePostRoute,
 } from '../../openapi/post'
@@ -100,6 +102,7 @@ app.openapi(fetchUserPostListInRegionRoute, async (c) => {
 
 app.openapi(searchUserPostListRoute, async (c) => {
 	return handleErrors(async (ctx) => {
+		console.log('start', new Date())
 		const { userId } = ctx.req.valid('param')
 		const { q, startDate, endDate, limit, offset } = ctx.req.valid('query')
 		const limitNum = Number(limit)
@@ -113,6 +116,7 @@ app.openapi(searchUserPostListRoute, async (c) => {
 			limitNum,
 			offsetNum
 		)
+		console.log('enddd', new Date())
 		return ctx.json({
 			posts: res,
 			limit: limitNum,
@@ -161,6 +165,51 @@ app.openapi(fetchUserTagPostListRoute, async (c) => {
 			ctx,
 			userId,
 			tagId,
+			limitNum,
+			offsetNum
+		)
+		return ctx.json({
+			posts: res,
+			limit: limitNum,
+			offset: offsetNum,
+			totalCount,
+		})
+	}, c)
+})
+
+app.openapi(fetchPostLikePostListRoute, async (c) => {
+	return handleErrors(async (ctx) => {
+		const { userId } = ctx.req.valid('param')
+		const { limit, offset } = ctx.req.valid('query')
+		const limitNum = Number(limit)
+		const offsetNum = Number(offset)
+		const { res, totalCount } = await svc.post.getByPostLikeUserId(
+			ctx,
+			userId,
+			limitNum,
+			offsetNum
+		)
+		return ctx.json({
+			posts: res,
+			limit: limitNum,
+			offset: offsetNum,
+			totalCount,
+		})
+	}, c)
+})
+
+app.openapi(searchPostLikePostListRoute, async (c) => {
+	return handleErrors(async (ctx) => {
+		const { userId } = ctx.req.valid('param')
+		const { q, startDate, endDate, limit, offset } = ctx.req.valid('query')
+		const limitNum = Number(limit)
+		const offsetNum = Number(offset)
+		const { res, totalCount } = await svc.post.getBySearchPostLike(
+			ctx,
+			userId,
+			q,
+			startDate,
+			endDate,
 			limitNum,
 			offsetNum
 		)

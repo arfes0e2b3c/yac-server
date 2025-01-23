@@ -17,6 +17,14 @@ class PostTagRepository {
 			return res
 		})
 	}
+	async getByPostId(c: Context, postId: string) {
+		return withDbConnection(c, async (db) => {
+			const res = await db.query.postTagsTable.findMany({
+				where: sql`${postTagsTable.postId} = ${postId}`,
+			})
+			return res
+		})
+	}
 	async create(c: Context, body: PostTagInputSchema) {
 		return withDbConnection(c, async (db) => {
 			const [res] = await db.insert(postTagsTable).values(body).returning({

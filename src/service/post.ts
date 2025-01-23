@@ -1,8 +1,7 @@
 import { Context } from 'hono'
 import {
-	CreatePostInputSchema,
 	InfiniteBaseQueryWithDateSchema,
-	PostInputSchema,
+	UpsertPostInputSchema,
 } from '../../openapi/post'
 import { api } from '../api'
 import { repo } from '../repository'
@@ -37,6 +36,13 @@ class PostService {
 		query: InfiniteBaseQueryWithDateSchema
 	) {
 		return await repo.post.getByUserId(c, userId, query)
+	}
+	async getDraftByUserId(
+		c: Context,
+		userId: string,
+		query: InfiniteBaseQueryWithDateSchema
+	) {
+		return await repo.post.getDraftByUserId(c, userId, query)
 	}
 	async getByUserIdInRegion(
 		c: Context,
@@ -94,7 +100,36 @@ class PostService {
 		return await repo.post.getByUserTagId(c, userId, tagId, limit, offset)
 	}
 
-	async create(c: Context, body: CreatePostInputSchema) {
+	async getByPostLikeUserId(
+		c: Context,
+		userId: string,
+		limit: number,
+		offset: number
+	) {
+		return await repo.post.getByPostLikeUserId(c, userId, limit, offset)
+	}
+
+	async getBySearchPostLike(
+		c: Context,
+		userId: string,
+		q: string,
+		startDate: string,
+		endDate: string,
+		limit: number,
+		offset: number
+	) {
+		return await repo.post.getBySearchPostLikeUserId(
+			c,
+			userId,
+			q,
+			startDate,
+			endDate,
+			limit,
+			offset
+		)
+	}
+
+	async create(c: Context, body: UpsertPostInputSchema) {
 		const score = await api.openAi.evaluateSentiment(c, body.post.content)
 		const postRes = await repo.post.create(c, body.post, score)
 		for (const tagId of body.tagIds ?? []) {
@@ -102,8 +137,24 @@ class PostService {
 		}
 		return postRes
 	}
-	async updateByPostId(c: Context, postId: string, body: PostInputSchema) {
-		return await repo.post.updateByPostId(c, postId, body)
+	async updateByPostId(
+		c: Context,
+		postId: string,
+		body: UpsertPostInputSchema
+	) {
+		const score = body.post.isScoreChanged
+			? body.post.score
+			: await api.openAi.evaluateSentiment(c, body.post.content)
+		const postRes = await repo.post.updateByPostId(c, postId, body.post, score)
+		const tags = await repo.postTag.getByPostId(c, postId)
+		const unRegisteredtagIds =
+			body.tagIds?.filter(
+				(tagId) => tags.find((tag) => tag.tagId === tagId) === undefined
+			) ?? []
+		for (const tagId of unRegisteredtagIds ?? []) {
+			await repo.postTag.create(c, { postId: postRes.id, tagId })
+		}
+		return postRes
 	}
 	async deleteByPostId(c: Context, postId: string) {
 		return await repo.post.deleteByPostId(c, postId)

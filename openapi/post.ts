@@ -13,6 +13,7 @@ export const postSchema = z.object({
 	visibility: z.enum(['private', 'public', 'only_followers']),
 	date: zDate('2024-09-23 07:57:07').nullable(),
 	score: zNum(0),
+	isDraft: z.boolean().default(false),
 	createdAt: zDate('2024-09-23 07:57:06'),
 	updatedAt: zDate('2024-09-23 07:57:06'),
 	deletedAt: zDate('2024-09-23 07:57:06').nullable(),
@@ -20,6 +21,16 @@ export const postSchema = z.object({
 
 export const postListSchema = z.object({
 	posts: z.array(postSchema),
+})
+
+export const postWithPostLikesSchema = z.object({
+	posts: z.array(
+		postSchema.extend({
+			postLikes: z.array(
+				z.object({ userId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7') })
+			),
+		})
+	),
 })
 
 export const postListWithMediaItemSchema = z.object({
@@ -44,6 +55,20 @@ export const postListWithMediaItemAndTagSchema = z.object({
 					})
 				)
 				.optional(),
+		})
+	),
+	limit: zNum(10),
+	offset: zNum(0),
+	totalCount: zNum(100),
+})
+
+export const postListWithMediaItemAndPostLikesSchema = z.object({
+	posts: z.array(
+		postSchema.extend({
+			mediaItem: mediaItemSchema.nullable(),
+			postLikes: z.array(
+				z.object({ userId: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7') })
+			),
 		})
 	),
 	limit: zNum(10),
@@ -92,20 +117,25 @@ const postInputSchema = z.object({
 	mediaItemId: zString('01J8F3CJR0NJM89W64KYWSEJVA').nullable(),
 	visibility: z.enum(['private', 'public', 'only_followers']),
 	date: z.coerce.date(),
+	isDraft: z.boolean().default(false),
 })
 
-const createPostInputSchema = z.object({
-	post: postInputSchema,
+const upsertPostInputSchema = z.object({
+	post: postInputSchema.extend({
+		score: zNum(0),
+		isScoreChanged: z.boolean().default(false),
+	}),
 	tagIds: z.array(zString('01J8F3RR15SSSVV2F3AGMJ4ZE7')).nullable(),
 })
 
 export type PostSchema = z.infer<typeof postSchema>
+export type PostWithPostLikesSchema = z.infer<typeof postWithPostLikesSchema>
 export type PostListWithMediaitemSchema = z.infer<
 	typeof postListWithMediaItemSchema
 >
 export type PostDetailSchema = z.infer<typeof postDetailSchema>
 export type PostInputSchema = z.infer<typeof postInputSchema>
-export type CreatePostInputSchema = z.infer<typeof createPostInputSchema>
+export type UpsertPostInputSchema = z.infer<typeof upsertPostInputSchema>
 
 export const fetchPostListRoute = createRoute({
 	path: '/posts',
@@ -149,7 +179,7 @@ export const fetchPostListInRegionRoute = createRoute({
 			description: '投稿一覧',
 			content: {
 				'application/json': {
-					schema: postListSchema,
+					schema: postWithPostLikesSchema,
 				},
 			},
 		},
@@ -170,6 +200,29 @@ export const fetchUserPostListRoute = createRoute({
 	responses: {
 		200: {
 			description: 'ユーザーの投稿一覧',
+			content: {
+				'application/json': {
+					schema: postListWithMediaItemAndTagSchema,
+				},
+			},
+		},
+	},
+})
+
+export const fetchUserDraftListRoute = createRoute({
+	path: '/users/{userId}/posts/draft',
+	method: 'get',
+	description: 'ユーザーの下書き一覧を取得する',
+	operationId: 'fetchUserDraftList',
+	request: {
+		params: z.object({
+			userId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
+		}),
+		query: infiniteBaseQuery.merge(dateQuery),
+	},
+	responses: {
+		200: {
+			description: 'ユーザーの下書き一覧',
 			content: {
 				'application/json': {
 					schema: postListWithMediaItemAndTagSchema,
@@ -256,7 +309,7 @@ export const fetchMediaItemPostListRoute = createRoute({
 			description: 'コンテンツに紐づく投稿一覧',
 			content: {
 				'application/json': {
-					schema: postListWithMediaItemSchema,
+					schema: postListWithMediaItemAndPostLikesSchema,
 				},
 			},
 		},
@@ -284,6 +337,61 @@ export const fetchUserTagPostListRoute = createRoute({
 			content: {
 				'application/json': {
 					schema: postListWithMediaItemSchema,
+				},
+			},
+		},
+	},
+})
+
+export const fetchPostLikePostListRoute = createRoute({
+	path: 'users/postLikes/{userId}/posts',
+	method: 'get',
+	description: 'いいねした投稿一覧を取得する',
+	operationId: 'fetchPostLikePostList',
+	request: {
+		query: z.object({
+			limit: zString('10').default('10'),
+			offset: zString('0').default('0'),
+		}),
+		params: z.object({
+			userId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
+		}),
+	},
+	responses: {
+		200: {
+			description: 'いいねした投稿一覧',
+			content: {
+				'application/json': {
+					schema: postListWithMediaItemAndPostLikesSchema,
+				},
+			},
+		},
+	},
+})
+
+export const searchPostLikePostListRoute = createRoute({
+	path: 'users/postLikes/{userId}/posts/search',
+	method: 'get',
+	description: 'いいねした投稿を検索する',
+	operationId: 'searchPostLikePostList',
+	request: {
+		query: z.object({
+			q: zString('キーワード'),
+			startDate: zString('2024-09-23 07:57:07'),
+			endDate: zString('2024-09-23 07:57:07'),
+			limit: zString('10').default('10'),
+			offset: zString('0').default('0'),
+		}),
+		params: z.object({
+			userId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
+		}),
+	},
+	responses: {
+		200: {
+			description: '検索結果',
+			content: {
+				'application/json': {
+					schema: postListWithMediaItemAndPostLikesSchema,
 				},
 			},
 		},
@@ -322,7 +430,7 @@ export const createPostRoute = createRoute({
 			required: true,
 			content: {
 				'application/json': {
-					schema: createPostInputSchema,
+					schema: upsertPostInputSchema,
 				},
 			},
 		},
@@ -351,7 +459,7 @@ export const updatePostRoute = createRoute({
 			required: true,
 			content: {
 				'application/json': {
-					schema: postInputSchema,
+					schema: upsertPostInputSchema,
 				},
 			},
 		},

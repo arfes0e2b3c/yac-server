@@ -37,6 +37,13 @@ class PostService {
 	) {
 		return await repo.post.getByUserId(c, userId, query)
 	}
+	async getDraftByUserId(
+		c: Context,
+		userId: string,
+		query: InfiniteBaseQueryWithDateSchema
+	) {
+		return await repo.post.getDraftByUserId(c, userId, query)
+	}
 	async getByUserIdInRegion(
 		c: Context,
 		limit: number,
@@ -135,7 +142,9 @@ class PostService {
 		postId: string,
 		body: UpsertPostInputSchema
 	) {
-		const score = await api.openAi.evaluateSentiment(c, body.post.content)
+		const score = body.post.isScoreChanged
+			? body.post.score
+			: await api.openAi.evaluateSentiment(c, body.post.content)
 		const postRes = await repo.post.updateByPostId(c, postId, body.post, score)
 		const tags = await repo.postTag.getByPostId(c, postId)
 		const unRegisteredtagIds =

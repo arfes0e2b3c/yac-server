@@ -1,4 +1,4 @@
-import { count, desc, eq, sql } from 'drizzle-orm'
+import { and, count, desc, eq, sql } from 'drizzle-orm'
 import { Context } from 'hono'
 import { env as getEnv } from 'hono/adapter'
 import { HTTPException } from 'hono/http-exception'
@@ -86,7 +86,7 @@ class PostRepository {
 					mediaItemId: false,
 				},
 				orderBy: [desc(postsTable.date), desc(postsTable.createdAt)],
-				where: sql`${postsTable.deletedAt} IS NULL and ${postsTable.locationPoint} <@ box(point(${minLat}, ${minLng}), point(${maxLat}, ${maxLng})) and ${postsTable.visibility} = ${PostsTableVisibility.PUBLIC}`,
+				where: sql`${postsTable.deletedAt} IS NULL and ${postsTable.locationPoint} <@ box(point(${minLat}, ${minLng}), point(${maxLat}, ${maxLng})) and ${postsTable.visibility} = ${PostsTableVisibility.PUBLIC} and ${postsTable.isDraft} = false`,
 				limit,
 			})
 			return x
@@ -144,7 +144,7 @@ class PostRepository {
 		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
 
 		return withDbConnection(c, async (db) => {
-			const where = sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL`
+			const where = sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and ${postsTable.isDraft} = false`
 			if (startDate !== '' && endDate !== '') {
 				where.append(
 					sql` and ${postsTable.date} >= ${startDate} and ${postsTable.date} <= ${endDate}`
@@ -182,7 +182,61 @@ class PostRepository {
 				limit,
 				offset,
 			})
-			console.log(postRes[0].content)
+			const [countRes] = await db
+				.select({ count: count() })
+				.from(postsTable)
+				.where(where)
+			return { res: postRes, totalCount: countRes.count }
+		})
+	}
+
+	async getDraftByUserId(
+		c: Context,
+		userId: string,
+		query: InfiniteBaseQueryWithDateSchema
+	) {
+		const { startDate, endDate, limit, offset } = query
+		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
+
+		return withDbConnection(c, async (db) => {
+			const where = sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and ${postsTable.isDraft} = true`
+			if (startDate !== '' && endDate !== '') {
+				where.append(
+					sql` and ${postsTable.date} >= ${startDate} and ${postsTable.date} <= ${endDate}`
+				)
+			}
+			const postRes = await db.query.postsTable.findMany({
+				columns: {
+					userId: false,
+					mediaItemId: false,
+				},
+				extras: {
+					content:
+						sql`pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text`.as(
+							'content'
+						),
+				},
+				with: {
+					// user: true,
+					mediaItem: true,
+					postTags: {
+						columns: {
+							postId: false,
+							tagId: false,
+							createdAt: false,
+							updatedAt: false,
+							deletedAt: false,
+						},
+						with: {
+							tag: true,
+						},
+					},
+				},
+				orderBy: [desc(postsTable.date), desc(postsTable.createdAt)],
+				where,
+				limit,
+				offset,
+			})
 			const [countRes] = await db
 				.select({ count: count() })
 				.from(postsTable)
@@ -214,7 +268,7 @@ class PostRepository {
 						),
 				},
 				orderBy: [desc(postsTable.date), desc(postsTable.createdAt)],
-				where: sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and ${postsTable.locationPoint} <@ box(point(${minLat}, ${minLng}), point(${maxLat}, ${maxLng}))`,
+				where: sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and ${postsTable.locationPoint} <@ box(point(${minLat}, ${minLng}), point(${maxLat}, ${maxLng})) and ${postsTable.isDraft} = false`,
 				limit,
 			})
 		})
@@ -230,9 +284,8 @@ class PostRepository {
 		offset: number
 	) {
 		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
-
 		return withDbConnection(c, async (db) => {
-			const where = sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text ILIKE ${`%${q}%`}`
+			const where = sql`${postsTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text ILIKE ${`%${q}%`} and ${postsTable.isDraft} = false`
 			if (startDate && endDate) {
 				where.append(
 					sql` and ${postsTable.date} >= ${startDate} and ${postsTable.date} <= ${endDate}`
@@ -274,7 +327,7 @@ class PostRepository {
 		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
 
 		return withDbConnection(c, async (db) => {
-			const where = sql`${postsTable.mediaItemId} = ${mediaItemId} and ${postsTable.deletedAt} IS NULL and ${postsTable.visibility} = ${PostsTableVisibility.PUBLIC}`
+			const where = sql`${postsTable.mediaItemId} = ${mediaItemId} and ${postsTable.deletedAt} IS NULL and ${postsTable.visibility} = ${PostsTableVisibility.PUBLIC} and ${postsTable.isDraft} = false`
 			const postRes = await db.query.postsTable.findMany({
 				columns: {
 					userId: false,
@@ -426,7 +479,7 @@ class PostRepository {
 	) {
 		const cryptKey = getEnv<ReneEnv>(c).POST_CONTENT_CRYPT_KEY
 		return withDbConnection(c, async (db) => {
-			const where = sql`${postLikesTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL and pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text ILIKE ${`%${q}%`} and ${postsTable.visibility} = ${PostsTableVisibility.PUBLIC}`
+			const where = sql`${postLikesTable.userId} = ${userId} and ${postsTable.deletedAt} IS NULL`
 			const postRes = await db.query.postLikesTable.findMany({
 				columns: {
 					postId: false,
@@ -451,10 +504,9 @@ class PostRepository {
 							},
 						},
 						extras: {
-							content:
-								sql`pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text`.as(
-									'content'
-								),
+							content: sql`
+								pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text
+							`.as('content'),
 						},
 					},
 				},
@@ -463,12 +515,15 @@ class PostRepository {
 				offset,
 				orderBy: [desc(postLikesTable.createdAt)],
 			})
+
 			const postList = postRes.map((item) => item.post)
+
 			const [countRes] = await db
 				.select({ count: count() })
 				.from(postLikesTable)
 				.innerJoin(postsTable, eq(postLikesTable.postId, postsTable.id))
-				.where(sql`${postLikesTable.userId} = ${userId}`)
+				.where(and(eq(postLikesTable.userId, userId)))
+
 			return { res: postList, totalCount: countRes.count }
 		})
 	}
@@ -480,10 +535,10 @@ class PostRepository {
 				.insert(postsTable)
 				.values({
 					updatedAt: sql`NOW()`,
-					score,
 					encryptContent: sql`pgp_sym_encrypt(${body.content}, ${cryptKey})::bytea`,
 					...body,
 					content: '',
+					score,
 				})
 				.returning({ id: postsTable.id })
 			return res

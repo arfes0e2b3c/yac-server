@@ -8,6 +8,7 @@ import {
 	fetchPostLikePostListRoute,
 	fetchPostListInRegionRoute,
 	fetchPostListRoute,
+	fetchUserDraftListRoute,
 	fetchUserPostListInRegionRoute,
 	fetchUserPostListRoute,
 	fetchUserTagPostListRoute,
@@ -62,6 +63,27 @@ app.openapi(fetchUserPostListRoute, async (c) => {
 		const limitNum = Number(limit)
 		const offsetNum = Number(offset)
 		const { res, totalCount } = await svc.post.getByUserId(ctx, userId, {
+			limit: limitNum,
+			offset: offsetNum,
+			startDate,
+			endDate,
+		})
+		return ctx.json({
+			posts: res,
+			limit: limitNum,
+			offset: offsetNum,
+			totalCount,
+		})
+	}, c)
+})
+
+app.openapi(fetchUserDraftListRoute, async (c) => {
+	return handleErrors(async (ctx) => {
+		const { userId } = ctx.req.valid('param')
+		const { limit, offset, startDate, endDate } = ctx.req.valid('query')
+		const limitNum = Number(limit)
+		const offsetNum = Number(offset)
+		const { res, totalCount } = await svc.post.getDraftByUserId(ctx, userId, {
 			limit: limitNum,
 			offset: offsetNum,
 			startDate,

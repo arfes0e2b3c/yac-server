@@ -13,6 +13,7 @@ export const postSchema = z.object({
 	visibility: z.enum(['private', 'public', 'only_followers']),
 	date: zDate('2024-09-23 07:57:07').nullable(),
 	score: zNum(0),
+	isDraft: z.boolean().default(false),
 	createdAt: zDate('2024-09-23 07:57:06'),
 	updatedAt: zDate('2024-09-23 07:57:06'),
 	deletedAt: zDate('2024-09-23 07:57:06').nullable(),
@@ -116,10 +117,14 @@ const postInputSchema = z.object({
 	mediaItemId: zString('01J8F3CJR0NJM89W64KYWSEJVA').nullable(),
 	visibility: z.enum(['private', 'public', 'only_followers']),
 	date: z.coerce.date(),
+	isDraft: z.boolean().default(false),
 })
 
 const upsertPostInputSchema = z.object({
-	post: postInputSchema,
+	post: postInputSchema.extend({
+		score: zNum(0),
+		isScoreChanged: z.boolean().default(false),
+	}),
 	tagIds: z.array(zString('01J8F3RR15SSSVV2F3AGMJ4ZE7')).nullable(),
 })
 
@@ -195,6 +200,29 @@ export const fetchUserPostListRoute = createRoute({
 	responses: {
 		200: {
 			description: 'ユーザーの投稿一覧',
+			content: {
+				'application/json': {
+					schema: postListWithMediaItemAndTagSchema,
+				},
+			},
+		},
+	},
+})
+
+export const fetchUserDraftListRoute = createRoute({
+	path: '/users/{userId}/posts/draft',
+	method: 'get',
+	description: 'ユーザーの下書き一覧を取得する',
+	operationId: 'fetchUserDraftList',
+	request: {
+		params: z.object({
+			userId: zString('01J8F3CJR0NJM89W64KYWSEJVA'),
+		}),
+		query: infiniteBaseQuery.merge(dateQuery),
+	},
+	responses: {
+		200: {
+			description: 'ユーザーの下書き一覧',
 			content: {
 				'application/json': {
 					schema: postListWithMediaItemAndTagSchema,

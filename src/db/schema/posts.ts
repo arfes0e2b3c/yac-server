@@ -1,5 +1,6 @@
 import { relations, sql } from 'drizzle-orm'
 import {
+	boolean,
 	customType,
 	doublePrecision,
 	pgEnum,
@@ -58,6 +59,7 @@ export const postsTable = pgTable('posts', {
 	date: timestamp('date'),
 	score: doublePrecision('score').default(0).notNull(),
 	createdAt: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+	isDraft: boolean('is_draft').default(false).notNull(),
 	updatedAt: timestamp('updated_at')
 		.default(sql`CURRENT_TIMESTAMP`)
 		.$onUpdate(() => sql`CURRENT_TIMESTAMP`)

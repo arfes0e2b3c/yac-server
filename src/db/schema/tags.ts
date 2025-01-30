@@ -1,8 +1,8 @@
 import { relations, sql } from 'drizzle-orm'
 import { pgTable, timestamp, unique, varchar } from 'drizzle-orm/pg-core'
 import { ulid } from 'ulid'
-import { usersTable } from './users'
 import { postTagsTable } from './postTags'
+import { usersTable } from './users'
 
 export const tagsTable = pgTable(
 	'tags',
@@ -14,7 +14,7 @@ export const tagsTable = pgTable(
 		name: varchar('name', { length: 255 }).notNull(),
 		userId: varchar('user_id', { length: 36 })
 			.references(() => usersTable.id, {
-				onDelete: 'set null',
+				onDelete: 'no action',
 			})
 			.notNull(),
 		createdAt: timestamp('created_at')

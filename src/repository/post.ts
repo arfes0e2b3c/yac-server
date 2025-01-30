@@ -23,10 +23,7 @@ class PostRepository {
 					mediaItemId: false,
 				},
 				extras: {
-					content:
-						sql`pgp_sym_decrypt(${postsTable.encryptContent}, ${cryptKey})::text`.as(
-							'content'
-						),
+					content: sql`${postsTable.encryptContent}`.as('content'),
 				},
 				with: {
 					user: true,

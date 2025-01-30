@@ -1,5 +1,6 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { zDate, zString } from './common'
+import { userSettingSchema } from './userSetting'
 
 export const userSchema = z.object({
 	id: zString('01J8F3RR15SSSVV2F3AGMJ4ZE7'),
@@ -13,7 +14,15 @@ export const userSchema = z.object({
 })
 
 const userDetailSchema = z.object({
-	user: userSchema,
+	user: userSchema.extend({
+		userSetting: userSettingSchema
+			.pick({
+				deviceToken: true,
+				notificationTime: true,
+				notificationEnabled: true,
+			})
+			.nullable(),
+	}),
 })
 
 const userInputSchema = z.object({
@@ -27,6 +36,7 @@ const userListSchema = z.object({ users: z.array(userSchema) })
 export type UserSchema = z.infer<typeof userSchema>
 export type UserListSchema = z.infer<typeof userListSchema>
 export type UserInputSchema = z.infer<typeof userInputSchema>
+export type UserDetailSchema = z.infer<typeof userDetailSchema>
 
 export const fetchUserListRoute = createRoute({
 	path: '/users',

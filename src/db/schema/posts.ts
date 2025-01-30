@@ -47,7 +47,7 @@ export const postsTable = pgTable('posts', {
 	relatedUrl: varchar('related_url', { length: 255 }),
 	userId: varchar('user_id', { length: 36 })
 		.references(() => usersTable.id, {
-			onDelete: 'set null',
+			onDelete: 'no action',
 		})
 		.notNull(),
 	mediaItemId: varchar('media_item_id', { length: 36 })

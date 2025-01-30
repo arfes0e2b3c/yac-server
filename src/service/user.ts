@@ -1,4 +1,5 @@
 import { Context } from 'hono'
+import { HTTPException } from 'hono/http-exception'
 import { UserInputSchema } from '../../openapi/user'
 import { repo } from '../repository'
 
@@ -7,7 +8,15 @@ class UserService {
 		return await repo.user.getAll(c)
 	}
 	async getById(c: Context, userId: string) {
-		return await repo.user.getById(c, userId)
+		const res = await repo.user.getById(c, userId)
+		if (!res) {
+			throw new HTTPException(500, { message: 'User not found' })
+		}
+		// if (!res.userSetting) {
+		// 	throw new HTTPException(500, { message: 'User setting is null' })
+		// }
+		// domain.userSetting.checkFieldsNotNull(res.userSetting ?? {})
+		return res
 	}
 	async create(c: Context, body: UserInputSchema) {
 		return await repo.user.create(c, body)

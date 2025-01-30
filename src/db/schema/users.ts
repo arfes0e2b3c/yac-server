@@ -4,6 +4,7 @@ import { ulid } from 'ulid'
 import { postLikesTable } from './postLikes'
 import { postsTable } from './posts'
 import { tagsTable } from './tags'
+import { userSettingsTable } from './userSettings'
 
 export const usersTable = pgTable('users', {
 	id: varchar('id', { length: 36 })
@@ -22,10 +23,11 @@ export const usersTable = pgTable('users', {
 	deletedAt: timestamp('deleted_at').default(sql`NULL`),
 })
 
-export const usersRelation = relations(usersTable, ({ many }) => ({
-	tagsTable: many(tagsTable),
-	postsTable: many(postsTable),
+export const usersRelation = relations(usersTable, ({ many, one }) => ({
+	tags: many(tagsTable),
+	posts: many(postsTable),
 	postLikes: many(postLikesTable),
+	userSetting: one(userSettingsTable),
 }))
 
 export type UsersTableSchema = typeof usersTable.$inferSelect

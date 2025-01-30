@@ -14,7 +14,7 @@ export const postLikesTable = pgTable(
 		userId: varchar('user_id', { length: 36 })
 			.notNull()
 			.references(() => usersTable.id, {
-				onDelete: 'cascade',
+				onDelete: 'no action',
 			}),
 		createdAt: timestamp('created_at')
 			.default(sql`CURRENT_TIMESTAMP`)

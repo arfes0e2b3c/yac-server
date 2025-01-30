@@ -3,6 +3,7 @@ import * as postLikes from './postLikes'
 import * as postTags from './postTags'
 import * as posts from './posts'
 import * as tags from './tags'
+import * as userSettings from './userSettings'
 import * as users from './users'
 
 export const schema = {
@@ -12,4 +13,5 @@ export const schema = {
 	...mediaItems,
 	...postTags,
 	...postLikes,
+	...userSettings,
 }

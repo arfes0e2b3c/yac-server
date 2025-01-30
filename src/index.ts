@@ -1,5 +1,8 @@
 import { swaggerUI } from '@hono/swagger-ui'
 import { OpenAPIHono } from '@hono/zod-openapi'
+import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 import { Context } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { apiApp } from './controller/api'
@@ -9,6 +12,7 @@ import { postLikeApp } from './controller/postLike'
 import { postTagApp } from './controller/postTag'
 import { tagApp } from './controller/tag'
 import { userApp } from './controller/user'
+import { userSettingApp } from './controller/userSetting'
 import { svc } from './service'
 import { ReneEnv } from './types'
 
@@ -30,6 +34,7 @@ app.route('/', mediaItemApp)
 app.route('/', postTagApp)
 app.route('/', apiApp)
 app.route('/', postLikeApp)
+app.route('/', userSettingApp)
 
 app.doc31('/doc', {
 	openapi: '3.1.0',
@@ -46,16 +51,40 @@ app.get(
 	})
 )
 
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.tz.setDefault('America/New_York')
+
 // scheduledが個別のappからは呼び出せないので仕方なくここに書いている
 const scheduled: ExportedHandlerScheduledHandler<ReneEnv> = async (
-	_,
+	event,
 	env,
 	c
 ) => {
 	const ctx = {
 		env,
 	} as Context
-	c.waitUntil(svc.mediaItem.countMediaItemRelations(ctx))
+	console.log('scheduled', event.cron)
+	switch (event.cron) {
+		case '*/30 * * * *':
+			c.waitUntil(
+				svc.notification.sendDraftNotification(
+					ctx,
+					dayjs(event.scheduledTime).add(9, 'h').format()
+				)
+			)
+			break
+		case '*/1 * * * *':
+			await svc.notification.sendDraftNotification(
+				ctx,
+				dayjs(event.scheduledTime).add(9, 'h').format()
+			)
+
+			break
+		case '0 19 * * *':
+			c.waitUntil(svc.mediaItem.countMediaItemRelations(ctx))
+			break
+	}
 }
 
 export default {

@@ -15,6 +15,7 @@ import { userApp } from './controller/user'
 import { userSettingApp } from './controller/userSetting'
 import { svc } from './service'
 import { ReneEnv } from './types'
+import { analysisApp } from './controller/analysis'
 
 const app = new OpenAPIHono().basePath('/api')
 
@@ -35,6 +36,7 @@ app.route('/', postTagApp)
 app.route('/', apiApp)
 app.route('/', postLikeApp)
 app.route('/', userSettingApp)
+app.route('/', analysisApp)
 
 app.doc31('/doc', {
 	openapi: '3.1.0',
@@ -64,7 +66,6 @@ const scheduled: ExportedHandlerScheduledHandler<ReneEnv> = async (
 	const ctx = {
 		env,
 	} as Context
-	console.log('scheduled', event.cron)
 	switch (event.cron) {
 		case '*/30 * * * *':
 			c.waitUntil(

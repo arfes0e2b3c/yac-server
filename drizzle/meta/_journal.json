@@ -190,6 +190,13 @@
       "when": 1737958498023,
       "tag": "0026_previous_nighthawk",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1738672937090,
+      "tag": "0027_military_lester",
+      "breakpoints": true
     }
   ]
 }

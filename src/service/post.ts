@@ -5,6 +5,7 @@ import {
 } from '../../openapi/post'
 import { api } from '../api'
 import { repo } from '../repository'
+import { UserId } from '../types/brand'
 
 class PostService {
 	async getAll(c: Context) {
@@ -65,7 +66,7 @@ class PostService {
 	}
 	async getBySearch(
 		c: Context,
-		userId: string,
+		userId: UserId,
 		q: string,
 		startDate: string,
 		endDate: string,
@@ -128,7 +129,6 @@ class PostService {
 			offset
 		)
 	}
-
 	async create(c: Context, body: UpsertPostInputSchema) {
 		const score = await api.openAi.evaluateSentiment(c, body.post.content)
 		const postRes = await repo.post.create(c, body.post, score)

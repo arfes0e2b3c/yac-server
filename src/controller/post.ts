@@ -124,7 +124,6 @@ app.openapi(fetchUserPostListInRegionRoute, async (c) => {
 
 app.openapi(searchUserPostListRoute, async (c) => {
 	return handleErrors(async (ctx) => {
-		console.log('start', new Date())
 		const { userId } = ctx.req.valid('param')
 		const { q, startDate, endDate, limit, offset } = ctx.req.valid('query')
 		const limitNum = Number(limit)
@@ -138,7 +137,6 @@ app.openapi(searchUserPostListRoute, async (c) => {
 			limitNum,
 			offsetNum
 		)
-		console.log('enddd', new Date())
 		return ctx.json({
 			posts: res,
 			limit: limitNum,

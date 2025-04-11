@@ -5,6 +5,14 @@ import { withDbConnection } from '../db/connection'
 import { postLikesTable } from '../db/schema/postLikes'
 
 class PostLikeRepository {
+	async getAllByUserId(c: Context, userId: string) {
+		return withDbConnection(c, async (db) => {
+			return await db
+				.select()
+				.from(postLikesTable)
+				.where(sql`${postLikesTable.userId} = ${userId}`)
+		})
+	}
 	async exist(c: Context, body: PostLikeInputSchema) {
 		return withDbConnection(c, async (db) => {
 			const res = await db

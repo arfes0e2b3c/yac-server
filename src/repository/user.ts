@@ -43,7 +43,6 @@ class UserRepository {
 			.hour(Number(time.slice(0, 2)))
 			.minute(Number(time.slice(3)))
 			.startOf('minute')
-		console.log('yesterday', yesterday)
 		return withDbConnection(c, async (db) => {
 			const rows = await db
 				.select()
@@ -56,7 +55,6 @@ class UserRepository {
 				.where(
 					sql`${postsTable.deletedAt} IS NULL and ${postsTable.isDraft} = true and ${postsTable.createdAt} > ${yesterday} and ${userSettingsTable.notificationEnabled} = true and ${userSettingsTable.notificationTime} = ${time}`
 				)
-			console.log('rows', rows)
 			const res = rows.reduce<string[]>((acc, row) => {
 				const userSetting = row.user_settings
 				if (
@@ -67,10 +65,10 @@ class UserRepository {
 				}
 				return acc
 			}, [])
-			console.log('deviceTokens', res)
 			return res
 		})
 	}
+
 	async create(c: Context, body: UserInputSchema) {
 		return withDbConnection(c, async (db) => {
 			const [res] = await db

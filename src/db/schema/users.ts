@@ -1,6 +1,7 @@
 import { relations, sql } from 'drizzle-orm'
 import { pgTable, timestamp, varchar } from 'drizzle-orm/pg-core'
 import { ulid } from 'ulid'
+import { blocksTable } from './blocks'
 import { postLikesTable } from './postLikes'
 import { postsTable } from './posts'
 import { tagsTable } from './tags'
@@ -11,7 +12,7 @@ export const usersTable = pgTable('users', {
 		.notNull()
 		.primaryKey()
 		.$defaultFn(() => ulid()),
-	userCode: varchar('user_code', { length: 255 }).notNull().unique(),
+	userCode: varchar('user_code', { length: 255 }).notNull(),
 	name: varchar('name', { length: 255 }).notNull(),
 	bio: varchar('bio', { length: 255 }),
 	lastLoginedAt: timestamp('last_logined_at').default(sql`NULL`),
@@ -27,6 +28,7 @@ export const usersRelation = relations(usersTable, ({ many, one }) => ({
 	tags: many(tagsTable),
 	posts: many(postsTable),
 	postLikes: many(postLikesTable),
+	blocks: many(blocksTable),
 	userSetting: one(userSettingsTable),
 }))
 

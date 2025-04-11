@@ -13,26 +13,28 @@ class NotificationRepository {
 		deviceTokens.push('ExponentPushToken[jLXWuyD03p5Xk1u8gWffRC]')
 		console.log('deviceTokens2!', deviceTokens)
 
-		for (let i = 0; i < deviceTokens.length / bactchSize; i++) {
-			const batchTokens = deviceTokens.slice(
-				i * bactchSize,
-				(i + 1) * bactchSize
-			)
-			Promise.all(
-				batchTokens.map(async (token) => {
-					console.log('token', token)
-					return await fetch('https://exp.host/--/api/v2/push/send', {
-						method: 'POST',
-						headers: {
-							Accept: 'application/json',
-							'Accept-encoding': 'gzip, deflate',
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify(message(token)),
-					})
-				})
-			)
-		}
+		// for (let i = 0; i < deviceTokens.length / bactchSize; i++) {
+		// 	const batchTokens = deviceTokens.slice(
+		// 		i * bactchSize,
+		// 		(i + 1) * bactchSize
+		// 	)
+		// 	Promise.all(
+		// batchTokens.map(async (token) => {
+		deviceTokens.map(async (token) => {
+			console.log('token', token)
+			const res = await fetch('https://exp.host/--/api/v2/push/send', {
+				method: 'POST',
+				headers: {
+					Accept: 'application/json',
+					'Accept-encoding': 'gzip, deflate',
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(message(token)),
+			})
+			console.log('res', String(await res.json()))
+		})
+		// )
+		// }
 		console.log('notification sent')
 	}
 }

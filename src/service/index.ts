@@ -1,3 +1,4 @@
+import { analysisSvc as analysis } from './analysis'
 import { apiService as api } from './api'
 import { mediaItemSvc as mediaItem } from './mediaItem'
 import { notificationSvc as notification } from './notification'
@@ -18,4 +19,5 @@ export const svc = {
 	postLike,
 	notification,
 	userSetting,
+	analysis,
 }

@@ -12,6 +12,8 @@ const reneEnv = z.object({
 	AWS_SECRET_ACCESS_KEY: z.string(),
 	CLOUDFRONT_BASE_URL: z.string(),
 	POST_CONTENT_CRYPT_KEY: z.string(),
+	SUPABASE_SERVICE_ROLE_KEY: z.string(),
+	SUPABASE_URL: z.string(),
 })
 
 export type ReneEnv = z.infer<typeof reneEnv>

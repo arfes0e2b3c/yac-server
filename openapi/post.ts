@@ -33,30 +33,29 @@ export const postWithPostLikesSchema = z.object({
 	),
 })
 
+export const postWithMediaItemSchema = postSchema.extend({
+	mediaItem: mediaItemSchema.nullable(),
+})
+
 export const postListWithMediaItemSchema = z.object({
-	posts: z.array(
-		postSchema.extend({
-			mediaItem: mediaItemSchema.nullable(),
-		})
-	),
+	posts: z.array(postWithMediaItemSchema),
 	limit: zNum(10),
 	offset: zNum(0),
 	totalCount: zNum(100),
 })
 
+export const postWithMediaItemAndTagSchema = postWithMediaItemSchema.extend({
+	postTags: z
+		.array(
+			z.object({
+				tag: tagSchema,
+			})
+		)
+		.optional(),
+})
+
 export const postListWithMediaItemAndTagSchema = z.object({
-	posts: z.array(
-		postSchema.extend({
-			mediaItem: mediaItemSchema.nullable(),
-			postTags: z
-				.array(
-					z.object({
-						tag: tagSchema,
-					})
-				)
-				.optional(),
-		})
-	),
+	posts: z.array(postWithMediaItemAndTagSchema),
 	limit: zNum(10),
 	offset: zNum(0),
 	totalCount: zNum(100),

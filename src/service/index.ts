@@ -7,6 +7,7 @@ import { postLikeSvc as postLike } from './postLike'
 import { postTagSvc as postTag } from './postTag'
 import { tagSvc as tag } from './tag'
 import { userSvc as user } from './user'
+import { userBlockSvc as userBlock } from './userBlock'
 import { userSettingSvc as userSetting } from './userSetting'
 
 export const svc = {
@@ -20,4 +21,5 @@ export const svc = {
 	notification,
 	userSetting,
 	analysis,
+	userBlock
 }

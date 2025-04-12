@@ -5,6 +5,7 @@ import { postLikeRepo as postLike } from './postLike'
 import { postTagRepo as postTag } from './postTag'
 import { tagRepo as tag } from './tag'
 import { userRepo as user } from './user'
+import { userBlockRepo as userBlock } from './userBlock'
 import { userSettingRepo as userSetting } from './userSetting'
 
 export const repo = {
@@ -16,4 +17,5 @@ export const repo = {
 	postLike,
 	notification,
 	userSetting,
+	userBlock
 }
